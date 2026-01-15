@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom component classes */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  overflow-x: hidden;
+}
+
+/* Better touch targets for mobile */
+button, a, input, select, textarea {
+  min-height: 44px; /* Apple's recommended minimum touch target */
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+@layer components {
+  .nav-btn {
+    @apply bg-white/15 border-2 border-white/30 text-white px-6 py-3 rounded-full cursor-pointer transition-all duration-300 font-semibold text-base min-w-[120px] text-center;
+  }
+
+  .nav-btn:hover {
+    @apply bg-white/25 border-white/50 -translate-y-0.5 shadow-lg;
+  }
+
+  .nav-btn:active {
+    @apply bg-white/35;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl p-10 shadow-lg transition-all duration-300 border border-black/5 min-h-[200px] flex flex-col;
+  }
+
+  .card:hover {
+    @apply -translate-y-2 shadow-2xl;
+    border-color: rgba(102, 126, 234, 0.2);
+  }
+
+  .primary-btn {
+    @apply text-white border-none px-8 py-4 rounded-xl cursor-pointer font-semibold text-base transition-all duration-300 w-full mt-auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .primary-btn:hover {
+    @apply -translate-y-1 shadow-xl;
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  }
+
+  .primary-btn:active {
+    @apply translate-y-0 shadow-lg;
+  }
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+  .nav-btn {
+    @apply bg-white bg-opacity-20 hover:bg-opacity-30 transition-all duration-200 rounded-lg font-medium backdrop-blur-sm border border-white border-opacity-20;
+  }
+
+  /* Mobile-specific adjustments */
+  @media (max-width: 640px) {
+    .nav-btn {
+      @apply min-w-0 flex-1 max-w-[80px];
+    }
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
