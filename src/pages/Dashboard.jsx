@@ -1,43 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { tournamentService } from '../services/tournamentService';
+import { useTournaments, useCreateTournament } from '../hooks/useTournaments';
+import { LoadingSpinner, LoadingSkeleton } from '../components/LoadingSpinner';
 import CreateTournamentModal from '../components/CreateTournamentModal';
+import Pagination from '../components/Pagination';
+import Button from '../components/ui/Button';
+import { usePagination } from '../hooks/usePagination';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const [tournaments, setTournaments] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { data: tournaments = [], isLoading, error, refetch } = useTournaments({
+        refetchInterval: 60000, // Poll every minute for updates
+    });
+    const createTournament = useCreateTournament();
+    
+    // Pagination
+    const { paginatedItems, currentPage, totalPages, goToPage } = usePagination(tournaments, 9);
 
-    useEffect(() => {
-        fetchTournaments();
-    }, []);
-
-    const fetchTournaments = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-
-            const data = await tournamentService.getTournaments();
-            setTournaments(data || []);
-        } catch (err) {
-            console.error('Dashboard error:', err);
-            setError('Unable to connect to server. Please make sure the backend is running.');
-            setTournaments([]);
-        } finally {
-            setLoading(false);
-        }
+    const handleTournamentCreated = async (tournamentData) => {
+        await createTournament.mutateAsync(tournamentData);
+        setIsModalOpen(false);
     };
 
-    const handleTournamentCreated = () => {
-        fetchTournaments(); // Refresh the list
-    };
-
-    if (loading) {
+    if (isLoading) {
         return (
-            <div className="flex justify-center items-center min-h-screen px-4">
-                <div className="text-base sm:text-lg text-center">Loading tournaments...</div>
+            <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+                <div className="mb-6">
+                    <LoadingSkeleton lines={2} className="h-8" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <div key={i} className="bg-white rounded-lg shadow-md p-6">
+                            <LoadingSkeleton lines={5} />
+                        </div>
+                    ))}
+                </div>
             </div>
         );
     }
@@ -55,10 +53,12 @@ const Dashboard = () => {
                 <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-3 rounded mb-4 sm:mb-6">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-0">
                         <div className="flex-1">
-                            <strong>Error:</strong> <span className="text-sm sm:text-base">{error}</span>
+                            <strong>Error:</strong> <span className="text-sm sm:text-base">
+                                {error?.message || 'Unable to connect to server. Please make sure the backend is running.'}
+                            </span>
                         </div>
                         <button
-                            onClick={fetchTournaments}
+                            onClick={() => refetch()}
                             className="bg-red-500 text-white px-3 py-1.5 sm:py-1 rounded text-sm hover:bg-red-600 self-start sm:self-auto sm:ml-4"
                         >
                             Retry
@@ -69,19 +69,20 @@ const Dashboard = () => {
 
             {/* Tournament Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {tournaments.length === 0 && !error ? (
+                {paginatedItems.length === 0 && !error ? (
                     <div className="col-span-full text-center py-8 sm:py-12 px-4">
                         <div className="text-gray-500 text-base sm:text-lg">No tournaments found</div>
                         <p className="text-gray-400 mt-2 text-sm sm:text-base">Create your first tournament to get started</p>
-                        <button
+                        <Button
                             onClick={() => setIsModalOpen(true)}
-                            className="mt-4 bg-blue-600 text-white px-4 sm:px-6 py-2 rounded-md hover:bg-blue-700 text-sm sm:text-base"
+                            size="md"
+                            className="mt-4"
                         >
                             Create Tournament
-                        </button>
+                        </Button>
                     </div>
                 ) : (
-                    tournaments.map((tournament) => (
+                    paginatedItems.map((tournament) => (
                         <div key={tournament.id || Math.random()} className="bg-white rounded-lg shadow-md p-4 sm:p-6 hover:shadow-lg transition-shadow">
                             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 line-clamp-2">
                                 {tournament.title || 'Unnamed Tournament'}
@@ -104,16 +105,28 @@ const Dashboard = () => {
                                     </span>
                                 </p>
                             </div>
-                            <button
+                            <Button
                                 onClick={() => navigate(`/tournament/${tournament.id}`)}
-                                className="w-full bg-blue-600 text-white px-4 py-2.5 sm:py-2 rounded-md hover:bg-blue-700 text-sm sm:text-base font-medium transition-colors"
+                                className="w-full"
+                                size="md"
                             >
-                                View Teams
-                            </button>
+                                View Details
+                            </Button>
                         </div>
                     ))
                 )}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="mt-6">
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={goToPage}
+                    />
+                </div>
+            )}
 
             {/* Floating Add Button */}
             <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
@@ -133,6 +146,7 @@ const Dashboard = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onTournamentCreated={handleTournamentCreated}
+                isLoading={createTournament.isPending}
             />
         </div>
     );

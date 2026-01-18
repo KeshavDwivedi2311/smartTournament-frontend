@@ -1,21 +1,36 @@
+import { Link, useLocation } from 'react-router-dom';
+
 export default function Layout({ children }) {
+  const location = useLocation();
+  
   return (
-    <div className="min-h-screen">
-      <header className="text-white p-4 sm:p-6 md:p-8 shadow-lg" style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'}}>
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-center">
-          🏸 Tourn-Pur
-        </h1>
-        <nav className="flex justify-center gap-2 sm:gap-4 md:gap-6 flex-wrap max-w-4xl mx-auto">
-          <button className="nav-btn text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2">Tournaments</button>
-          <button className="nav-btn text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2">Players</button>
-          <button className="nav-btn text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2">Matches</button>
-          <button className="nav-btn text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2">Rankings</button>
-        </nav>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          <div className="flex items-center justify-between">
+            <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+              <span className="text-2xl sm:text-3xl">🏸</span>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+                Tourn-Pur
+              </h1>
+            </Link>
+            <div className="flex items-center gap-4">
+              {location.pathname !== '/dashboard' && (
+                <Link
+                  to="/dashboard"
+                  className="text-sm sm:text-base px-3 py-2 rounded-md hover:bg-white/10 transition-colors"
+                >
+                  Dashboard
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
       </header>
 
-      <main className="p-4 sm:p-6 md:p-8 lg:p-12 xl:p-16 max-w-7xl mx-auto w-full">
+      <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {children}
       </main>
     </div>
-  )
+  );
 }

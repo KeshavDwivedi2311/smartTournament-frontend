@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { tournamentService } from '../services/tournamentService';
 
-const CreateTournamentModal = ({ isOpen, onClose, onTournamentCreated }) => {
+const CreateTournamentModal = ({ isOpen, onClose, onTournamentCreated, isLoading = false }) => {
     const [currentStep, setCurrentStep] = useState(1);
     const [tournamentData, setTournamentData] = useState({
         name: '',
@@ -10,6 +10,7 @@ const CreateTournamentModal = ({ isOpen, onClose, onTournamentCreated }) => {
         venues: [{ name: '', address: '', capacity: '' }]
     });
     const [loading, setLoading] = useState(false);
+    const isSubmitting = loading || isLoading;
     const [error, setError] = useState('');
 
     const handleInputChange = (field, value) => {
@@ -65,6 +66,8 @@ const CreateTournamentModal = ({ isOpen, onClose, onTournamentCreated }) => {
     };
 
     const handleSubmit = async () => {
+        if (isLoading) return; // Prevent double submission
+        
         setLoading(true);
         setError('');
 
@@ -77,8 +80,7 @@ const CreateTournamentModal = ({ isOpen, onClose, onTournamentCreated }) => {
                 maxParticipants: 100 // Default value
             };
 
-            await tournamentService.createTournament(tournamentPayload);
-            onTournamentCreated();
+            await onTournamentCreated(tournamentPayload);
             handleClose();
         } catch (err) {
             setError('Failed to create tournament. Please try again.');
@@ -260,10 +262,13 @@ const CreateTournamentModal = ({ isOpen, onClose, onTournamentCreated }) => {
                         ) : (
                             <button
                                 onClick={handleSubmit}
-                                disabled={loading}
-                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                                disabled={isSubmitting}
+                                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
                             >
-                                {loading ? 'Creating...' : 'Create Tournament'}
+                                {isSubmitting && (
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                )}
+                                {isSubmitting ? 'Creating...' : 'Create Tournament'}
                             </button>
                         )}
                     </div>

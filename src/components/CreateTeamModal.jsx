@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { teamService } from '../services/teamService';
+import { useCreateTeam } from '../hooks/useTeams';
+import { LoadingButton } from './LoadingSpinner';
 
 const CreateTeamModal = ({ isOpen, onClose, onTeamCreated, tournamentId }) => {
     const [teamData, setTeamData] = useState({
@@ -9,8 +10,8 @@ const CreateTeamModal = ({ isOpen, onClose, onTeamCreated, tournamentId }) => {
         contactPhone: '',
         teamLogoUrl: ''
     });
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const createTeam = useCreateTeam(tournamentId);
 
     const handleInputChange = (field, value) => {
         setTeamData(prev => ({
@@ -27,18 +28,14 @@ const CreateTeamModal = ({ isOpen, onClose, onTeamCreated, tournamentId }) => {
             return;
         }
 
-        setLoading(true);
         setError('');
 
         try {
-            await teamService.createTeam(teamData, tournamentId);
+            await createTeam.mutateAsync(teamData);
             onTeamCreated();
             handleClose();
         } catch (err) {
-            setError('Failed to create team. Please try again.');
-            console.error('Error creating team:', err);
-        } finally {
-            setLoading(false);
+            setError(err?.response?.data?.error || 'Failed to create team. Please try again.');
         }
     };
 
@@ -152,13 +149,13 @@ const CreateTeamModal = ({ isOpen, onClose, onTeamCreated, tournamentId }) => {
                         >
                             Cancel
                         </button>
-                        <button
+                        <LoadingButton
                             type="submit"
-                            disabled={loading}
-                            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                            loading={createTeam.isPending}
+                            className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
                         >
-                            {loading ? 'Creating...' : 'Create Team'}
-                        </button>
+                            Create Team
+                        </LoadingButton>
                     </div>
                 </form>
             </div>

@@ -3,8 +3,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { tournamentService } from '../services/tournamentService';
 import { matchService } from '../services/matchService';
 import MatchCard from './MatchCard';
+import { Target, Zap, Trophy, Settings, AlertTriangle, Eye, RefreshCw, Trash2, Plus, CheckCircle2 } from 'lucide-react';
 import QualifierSetupModal from './QualifierSetupModal';
 import CustomMatchModal from './CustomMatchModal';
+import CustomPairingModal from './CustomPairingModal';
 import SemifinalAndFinal from './SemifinalAndFinal';
 
 const KnockoutManager = ({ tournamentId }) => {
@@ -21,6 +23,8 @@ const KnockoutManager = ({ tournamentId }) => {
   const [activePhase, setActivePhase] = useState('qualifiers');
   const [showCreateMatch, setShowCreateMatch] = useState(false);
   const [showQualifierSetup, setShowQualifierSetup] = useState(false);
+  const [showCustomQualifierPairing, setShowCustomQualifierPairing] = useState(false);
+  const [showCustomSemifinalPairing, setShowCustomSemifinalPairing] = useState(false);
 
   // Only allow management if user is logged in and admin
   const canManage = isLoggedIn && isAdmin;
@@ -146,10 +150,10 @@ const KnockoutManager = ({ tournamentId }) => {
   };
 
   const phases = [
-    { key: 'qualifiers', label: 'Qualifiers', shortLabel: 'Qual', data: knockoutData.qualifiers, icon: '🎯' },
-    { key: 'semifinals', label: 'Semifinals', shortLabel: 'Semi', data: knockoutData.semifinals, icon: '⚡' },
-    { key: 'finals', label: 'Finals', shortLabel: 'Final', data: knockoutData.finals, icon: '🏆' },
-    { key: 'custom', label: 'Custom Matches', shortLabel: 'Custom', data: knockoutData.customMatches, icon: '⚙️' }
+    { key: 'qualifiers', label: 'Qualifiers', shortLabel: 'Qual', data: knockoutData.qualifiers, icon: Target },
+    { key: 'semifinals', label: 'Semifinals', shortLabel: 'Semi', data: knockoutData.semifinals, icon: Zap },
+    { key: 'finals', label: 'Finals', shortLabel: 'Final', data: knockoutData.finals, icon: Trophy },
+    { key: 'custom', label: 'Custom Matches', shortLabel: 'Custom', data: knockoutData.customMatches, icon: Settings }
   ];
 
   const getProgressionInfo = () => {
@@ -194,7 +198,7 @@ const KnockoutManager = ({ tournamentId }) => {
     return (
       <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 lg:p-6 mx-2 sm:mx-0">
         <div className="flex items-start mb-3 sm:mb-4">
-          <div className="text-red-500 text-lg sm:text-xl mr-2 sm:mr-3 flex-shrink-0">⚠️</div>
+          <AlertTriangle className="text-red-500 w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 flex-shrink-0" />
           <div className="min-w-0 flex-1">
             <h3 className="text-base sm:text-lg font-semibold text-red-800 mb-2">Error Loading Knockout Phase</h3>
             <p className="text-red-700 text-sm sm:text-base mb-3 sm:mb-4 break-words">{error}</p>
@@ -235,7 +239,7 @@ const KnockoutManager = ({ tournamentId }) => {
       {/* Header - Mobile Optimized */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg p-3 sm:p-4 lg:p-6">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xl sm:text-2xl">🏆</span>
+          <Trophy className="w-6 h-6 sm:w-8 sm:h-8" />
           <h2 className="text-lg sm:text-2xl lg:text-3xl font-bold">Knockout Phase</h2>
         </div>
         <p className="text-purple-100 text-xs sm:text-sm lg:text-base">
@@ -249,29 +253,29 @@ const KnockoutManager = ({ tournamentId }) => {
           <div className="sm:hidden space-y-2">
             <div className="bg-white bg-opacity-20 rounded-lg p-2">
               <div className="flex justify-between items-center">
-                <div className="font-semibold text-sm">🎯 Qualifiers</div>
+                <div className="font-semibold text-sm flex items-center gap-1"><Target className="w-4 h-4" /> Qualifiers</div>
                 <div className="text-sm">{progressionInfo.qualifiersCompleted}/{progressionInfo.qualifiersTotal}</div>
               </div>
               {progressionInfo.allQualifiersCompleted && (
-                <div className="text-green-200 text-xs mt-1">✅ Ready for semifinals</div>
+                <div className="text-green-200 text-xs mt-1 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ready for semifinals</div>
               )}
             </div>
             <div className="bg-white bg-opacity-20 rounded-lg p-2">
               <div className="flex justify-between items-center">
-                <div className="font-semibold text-sm">⚡ Semifinals</div>
+                <div className="font-semibold text-sm flex items-center gap-1"><Zap className="w-4 h-4" /> Semifinals</div>
                 <div className="text-sm">{progressionInfo.semifinalsCompleted}/{progressionInfo.semifinalsTotal}</div>
               </div>
               {progressionInfo.allSemifinalsCompleted && (
-                <div className="text-green-200 text-xs mt-1">✅ Ready for finals</div>
+                <div className="text-green-200 text-xs mt-1 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ready for finals</div>
               )}
             </div>
             <div className="bg-white bg-opacity-20 rounded-lg p-2">
               <div className="flex justify-between items-center">
-                <div className="font-semibold text-sm">🏆 Finals</div>
+                <div className="font-semibold text-sm flex items-center gap-1"><Trophy className="w-4 h-4" /> Finals</div>
                 <div className="text-sm">{knockoutData.finals.length > 0 ? `${progressionInfo.semifinalsCompleted}/1` : 'Not generated'}</div>
               </div>
               {knockoutData.finals.length > 0 && knockoutData.finals.every(m => m.status === 'COMPLETED') && (
-                <div className="text-green-200 text-xs mt-1">🏆 Tournament Complete!</div>
+                <div className="text-green-200 text-xs mt-1 flex items-center gap-1"><Trophy className="w-3 h-3" /> Tournament Complete!</div>
               )}
             </div>
           </div>
@@ -282,30 +286,30 @@ const KnockoutManager = ({ tournamentId }) => {
               <div className="font-semibold text-sm lg:text-base">Qualifiers</div>
               <div className="text-sm lg:text-base">{progressionInfo.qualifiersCompleted}/{progressionInfo.qualifiersTotal} completed</div>
               {progressionInfo.allQualifiersCompleted && (
-                <div className="text-green-200 text-xs mt-1">✅ Ready for semifinals</div>
+                <div className="text-green-200 text-xs mt-1 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ready for semifinals</div>
               )}
               {knockoutData.qualifiers.length > 0 && canManage && (
-                <div className="text-blue-200 text-xs mt-1">🔄 Can be reset and regenerated</div>
+                <div className="text-blue-200 text-xs mt-1 flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Can be reset and regenerated</div>
               )}
             </div>
             <div className="bg-white bg-opacity-20 rounded-lg p-3">
               <div className="font-semibold text-sm lg:text-base">Semifinals</div>
               <div className="text-sm lg:text-base">{progressionInfo.semifinalsCompleted}/{progressionInfo.semifinalsTotal} completed</div>
               {progressionInfo.allSemifinalsCompleted && (
-                <div className="text-green-200 text-xs mt-1">✅ Ready for finals</div>
+                <div className="text-green-200 text-xs mt-1 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Ready for finals</div>
               )}
               {knockoutData.semifinals.length > 0 && canManage && (
-                <div className="text-blue-200 text-xs mt-1">🔄 Can be reset and regenerated</div>
+                <div className="text-blue-200 text-xs mt-1 flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Can be reset and regenerated</div>
               )}
             </div>
             <div className="bg-white bg-opacity-20 rounded-lg p-3 lg:col-span-1">
               <div className="font-semibold text-sm lg:text-base">Finals</div>
               <div className="text-sm lg:text-base">{knockoutData.finals.length > 0 ? `${progressionInfo.semifinalsCompleted}/1 completed` : 'Not generated'}</div>
               {knockoutData.finals.length > 0 && knockoutData.finals.every(m => m.status === 'COMPLETED') && (
-                <div className="text-green-200 text-xs mt-1">🏆 Tournament Complete!</div>
+                <div className="text-green-200 text-xs mt-1 flex items-center gap-1"><Trophy className="w-3 h-3" /> Tournament Complete!</div>
               )}
               {knockoutData.finals.length > 0 && canManage && (
-                <div className="text-blue-200 text-xs mt-1">🔄 Can be reset and regenerated</div>
+                <div className="text-blue-200 text-xs mt-1 flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Can be reset and regenerated</div>
               )}
             </div>
           </div>
@@ -325,11 +329,11 @@ const KnockoutManager = ({ tournamentId }) => {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              <span className="mr-1">{phase.icon}</span>
+              {React.createElement(phase.icon, { className: "w-4 h-4 mr-1" })}
               <span className="sm:hidden">{phase.shortLabel}</span>
               <span className="hidden sm:inline">{phase.label}</span>
               <span className="ml-1">({phase.data.length})</span>
-              {!isLoggedIn && <span className="ml-1">👁️</span>}
+              {!isLoggedIn && <Eye className="w-4 h-4 ml-1" />}
             </button>
           ))}
         </div>
@@ -345,7 +349,7 @@ const KnockoutManager = ({ tournamentId }) => {
                 className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 text-sm sm:text-base flex items-center justify-center gap-2"
                 disabled={loading}
               >
-                <span>{knockoutData.qualifiers.length > 0 ? '🔄' : '🎯'}</span>
+                {knockoutData.qualifiers.length > 0 ? <RefreshCw className="w-4 h-4" /> : <Target className="w-4 h-4" />}
                 <span className="hidden sm:inline">
                   {knockoutData.qualifiers.length > 0 ? 'Reconfigure Qualifiers' : 'Setup Qualifier Matches'}
                 </span>
@@ -354,18 +358,60 @@ const KnockoutManager = ({ tournamentId }) => {
                 </span>
               </button>
 
+              <button
+                onClick={() => setShowCustomQualifierPairing(true)}
+                className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50 text-sm sm:text-base flex items-center justify-center gap-2"
+                disabled={loading}
+              >
+                <Target className="w-4 h-4" />
+                <span className="hidden sm:inline">Custom Pairing</span>
+                <span className="sm:hidden">Custom</span>
+              </button>
+
               {knockoutData.qualifiers.length > 0 && (
                 <button
                   onClick={resetQualifiers}
                   className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 text-sm sm:text-base flex items-center justify-center gap-2"
                   disabled={loading}
                 >
-                  <span>🗑️</span>
+                  <Trash2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Reset Qualifiers</span>
                   <span className="sm:hidden">Reset</span>
                 </button>
               )}
             </>
+          )}
+
+          {activePhase === 'semifinals' && canManage && (
+            <div className="space-y-2 sm:space-y-0 sm:flex sm:gap-2 sm:flex-wrap px-2 sm:px-0">
+              {progressionInfo.canGenerateSemifinals && (
+                <button
+                  onClick={async () => {
+                    try {
+                      await tournamentService.generateSemifinalMatches(tournamentId);
+                      await loadKnockoutData();
+                    } catch (error) {
+                      console.error('Error generating semifinals:', error);
+                    }
+                  }}
+                  className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 text-sm sm:text-base flex items-center justify-center gap-2"
+                  disabled={loading}
+                >
+                  <Zap className="w-4 h-4" />
+                  <span className="hidden sm:inline">Generate Semifinals</span>
+                  <span className="sm:hidden">Generate</span>
+                </button>
+              )}
+              <button
+                onClick={() => setShowCustomSemifinalPairing(true)}
+                className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50 text-sm sm:text-base flex items-center justify-center gap-2"
+                disabled={loading}
+              >
+                <Zap className="w-4 h-4" />
+                <span className="hidden sm:inline">Custom Pairing</span>
+                <span className="sm:hidden">Custom</span>
+              </button>
+            </div>
           )}
 
           {activePhase === 'custom' && (
@@ -374,7 +420,7 @@ const KnockoutManager = ({ tournamentId }) => {
               className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm sm:text-base flex items-center justify-center gap-2"
               disabled={loading}
             >
-              <span>➕</span>
+              <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Create Custom Match</span>
               <span className="sm:hidden">Create Match</span>
             </button>
@@ -392,16 +438,22 @@ const KnockoutManager = ({ tournamentId }) => {
               </svg>
               <p className="text-blue-700 text-sm sm:text-base">
                 <span className="hidden sm:inline">
-                  {activePhase === 'qualifiers'
-                    ? '🎯 Login to setup and manage qualifier matches'
-                    : '➕ Login to create custom matches'
-                  }
+                  <span className="inline-flex items-center gap-1">
+                    {activePhase === 'qualifiers' ? <Target className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {activePhase === 'qualifiers'
+                      ? 'Login to setup and manage qualifier matches'
+                      : 'Login to create custom matches'
+                    }
+                  </span>
                 </span>
                 <span className="sm:hidden">
-                  {activePhase === 'qualifiers'
-                    ? '🎯 Login to manage qualifiers'
-                    : '➕ Login to create matches'
-                  }
+                  <span className="inline-flex items-center gap-1">
+                    {activePhase === 'qualifiers' ? <Target className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {activePhase === 'qualifiers'
+                      ? 'Login to manage qualifiers'
+                      : 'Login to create matches'
+                    }
+                  </span>
                 </span>
               </p>
             </div>
@@ -533,6 +585,33 @@ const KnockoutManager = ({ tournamentId }) => {
               console.error('Error fetching teams:', error);
             }
           }}
+        />
+      )}
+
+      {canManage && showCustomQualifierPairing && (
+        <CustomPairingModal
+          tournamentId={tournamentId}
+          isOpen={showCustomQualifierPairing}
+          onClose={() => setShowCustomQualifierPairing(false)}
+          onSuccess={() => {
+            loadKnockoutData();
+            setShowCustomQualifierPairing(false);
+          }}
+          matchType="QUALIFIER"
+          availableTeams={availableTeams}
+        />
+      )}
+
+      {canManage && showCustomSemifinalPairing && (
+        <CustomPairingModal
+          tournamentId={tournamentId}
+          isOpen={showCustomSemifinalPairing}
+          onClose={() => setShowCustomSemifinalPairing(false)}
+          onSuccess={() => {
+            loadKnockoutData();
+            setShowCustomSemifinalPairing(false);
+          }}
+          matchType="SEMIFINAL"
         />
       )}
 

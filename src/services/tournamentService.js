@@ -192,6 +192,26 @@ export const tournamentService = {
         }
     },
 
+    createCustomQualifierPairings: async (tournamentId, pairingRequest) => {
+        try {
+            const response = await api.post(`/tournaments/${tournamentId}/custom-qualifier-pairings`, pairingRequest);
+            return response.data;
+        } catch (error) {
+            console.error('Error creating custom qualifier pairings:', error);
+            throw error;
+        }
+    },
+
+    createCustomSemifinalPairings: async (tournamentId, pairingRequest) => {
+        try {
+            const response = await api.post(`/tournaments/${tournamentId}/custom-semifinal-pairings`, pairingRequest);
+            return response.data;
+        } catch (error) {
+            console.error('Error creating custom semifinal pairings:', error);
+            throw error;
+        }
+    },
+
     // Reset/Delete methods
     resetQualifierMatches: async (tournamentId) => {
         try {
@@ -316,6 +336,17 @@ export const tournamentService = {
             winner: null
             };
         }
+        }
+    },
+
+    // Tournament Schedule Status
+    getScheduleStatus: async (tournamentId) => {
+        try {
+            const response = await api.get(`/tournaments/${tournamentId}/schedule/status`);
+            return response;
+        } catch (error) {
+            console.error('Error fetching schedule status:', error);
+            throw error;
         }
     },
 }
