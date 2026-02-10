@@ -12,7 +12,6 @@ const MatchCard = ({
   onStartMatch, 
   onMarkReady, 
   onRefresh, 
-  onRefreshWithFeedback, 
   onMatchUpdated, 
   readOnly = false 
 }) => {
@@ -57,6 +56,7 @@ const MatchCard = ({
             onClick={() => onMarkReady(match.id)}
             loading={loading}
             disabled={loading}
+            className="w-full sm:w-auto"
           >
             Mark Ready
           </Button>
@@ -65,14 +65,23 @@ const MatchCard = ({
       case 'READY':
       case 'NEXT':
         return (
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto">
             <input
-              type="text"
+              type="number"
               placeholder="Court"
               value={courtNumber}
-              onChange={(e) => setCourtNumber(e.target.value)}
-              className="w-16 px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only allow positive integers
+                if (value === '' || (parseInt(value) > 0 && parseInt(value) <= 99)) {
+                  setCourtNumber(value);
+                }
+              }}
+              min="1"
+              max="99"
+              className="flex-1 sm:w-20 px-3 py-3 sm:py-1.5 border-2 border-gray-300 rounded-lg text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               disabled={loading}
+              inputMode="numeric"
             />
             <Button
               size="sm"
@@ -80,6 +89,7 @@ const MatchCard = ({
               onClick={handleStartMatch}
               disabled={!courtNumber.trim() || loading}
               loading={loading}
+              className="flex-1 sm:flex-none min-h-[44px] sm:min-h-0"
             >
               Start
             </Button>
@@ -96,6 +106,7 @@ const MatchCard = ({
               setShowScoreUpdate(true);
             }}
             disabled={loading}
+            className="w-full sm:w-auto"
           >
             Update Score
           </Button>
@@ -276,9 +287,13 @@ const MatchCard = ({
 
       {/* Primary Action */}
       <div className="flex justify-end mb-3">
-        {getPrimaryAction() || (
+        {getPrimaryAction() ? (
+          <div className="w-full sm:w-auto">
+            {getPrimaryAction()}
+          </div>
+        ) : (
           !isLoggedIn && (
-            <p className="text-xs text-gray-500 text-right">Login to manage</p>
+            <p className="text-xs text-gray-500 text-right w-full sm:w-auto">Login to manage</p>
           )
         )}
       </div>

@@ -1,0 +1,80 @@
+// Icon Helper - Centralized icon imports from lucide-react
+import {
+  Trophy,
+  Target,
+  Calendar,
+  CheckCircle2,
+  Radio,
+  Flag,
+  Settings,
+  RefreshCw,
+  Eye,
+  AlertTriangle,
+  Award,
+  Users,
+  Clock,
+  MapPin,
+  Tag,
+  FileText,
+  BarChart3,
+  Trash2,
+  Plus,
+  X,
+  Edit,
+  Play,
+  Pause,
+  RotateCcw,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
+
+// Icon mapping for easy replacement
+export const Icons = {
+  Trophy,
+  Target,
+  Calendar,
+  CheckCircle2,
+  Radio,
+  Flag,
+  Settings,
+  RefreshCw,
+  Eye,
+  AlertTriangle,
+  Award,
+  Users,
+  Clock,
+  MapPin,
+  Tag,
+  FileText,
+  BarChart3,
+  Trash2,
+  Plus,
+  X,
+  Edit,
+  Play,
+  Pause,
+  RotateCcw,
+  ChevronLeft,
+  ChevronRight,
+};
+
+// Status icon mapping
+export const StatusIcons = {
+  SCHEDULED: Calendar,
+  READY: CheckCircle2,
+  NEXT: Target,
+  ONGOING: Radio,
+  COMPLETED: Flag,
+};
+
+// Helper function to get icon component
+export const getIcon = (iconName) => {
+  return Icons[iconName] || Icons.AlertTriangle;
+};
+
+// Helper function to get status icon
+export const getStatusIcon = (status) => {
+  return StatusIcons[status] || Icons.AlertTriangle;
+};
+
+export default Icons;

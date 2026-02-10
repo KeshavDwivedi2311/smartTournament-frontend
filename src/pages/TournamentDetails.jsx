@@ -181,43 +181,43 @@ const TournamentDetails = () => {
             {/* Tab Navigation */}
             <div className="bg-white rounded-lg shadow-md">
                 <div className="border-b border-gray-200">
-                    <nav className="flex overflow-x-auto scrollbar-hide">
+                    <nav className="flex overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
                         <button
                             onClick={() => setActiveTab('overview')}
-                            className={`px-3 sm:px-6 py-3 font-medium text-sm sm:text-base whitespace-nowrap flex-shrink-0 ${
+                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
                                 activeTab === 'overview'
-                                    ? 'border-b-2 border-blue-500 text-blue-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
+                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
                             }`}
                         >
                             Overview
                         </button>
                         <button
                             onClick={() => setActiveTab('matches')}
-                            className={`px-3 sm:px-6 py-3 font-medium text-sm sm:text-base whitespace-nowrap flex-shrink-0 ${
+                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
                                 activeTab === 'matches'
-                                    ? 'border-b-2 border-blue-500 text-blue-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
+                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
                             }`}
                         >
                             Matches
                         </button>
                         <button
                             onClick={() => setActiveTab('knockout')}
-                            className={`px-3 sm:px-6 py-3 font-medium text-sm sm:text-base whitespace-nowrap flex-shrink-0 ${
+                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
                                 activeTab === 'knockout'
-                                    ? 'border-b-2 border-blue-500 text-blue-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
+                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
                             }`}
                         >
                             Knockout
                         </button>
                         <button
                             onClick={() => setActiveTab('results')}
-                            className={`px-3 sm:px-6 py-3 font-medium text-sm sm:text-base whitespace-nowrap flex-shrink-0 ${
+                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
                                 activeTab === 'results'
-                                    ? 'border-b-2 border-blue-500 text-blue-600'
-                                    : 'text-gray-500 hover:text-gray-700'
+                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
+                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
                             }`}
                         >
                             Results

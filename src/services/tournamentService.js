@@ -133,41 +133,41 @@ export const tournamentService = {
         }
     },
 
-    generateQualifierMatches: async (tournamentId, teamsPerPool = 2, schedulingRules = {}) => {
+    generateQualifierMatches: async (tournamentId, request = {}) => {
         try {
-        const params = new URLSearchParams({
-            teamsPerPool: teamsPerPool.toString()
-        });
+            // Build the request body for the new flexible endpoint
+            const body = {
+                teamsPerPool: request.teamsPerPool || 2,
+                teamsPerPoolMap: request.teamsPerPoolMap || null,
+                selectedPoolIds: request.selectedPoolIds || null,
+                pairingStrategy: request.pairingStrategy || 'CROSS_POOL',
+                avoidSamePool: request.avoidSamePool !== undefined ? request.avoidSamePool : true
+            };
 
-        // Add scheduling rules as query parameters
-        if (schedulingRules.avoidSamePool !== undefined) {
-            params.append('avoidSamePool', schedulingRules.avoidSamePool.toString());
-        }
-        if (schedulingRules.matchingStrategy) {
-            params.append('matchingStrategy', schedulingRules.matchingStrategy);
-        }
-        if (schedulingRules.qualifierFormat) {
-            params.append('qualifierFormat', schedulingRules.qualifierFormat);
-        }
-
-        const response = await api.post(`/tournaments/${tournamentId}/generate-qualifiers?${params.toString()}`);
-        return response.data;
+            const response = await api.post(`/tournaments/${tournamentId}/generate-qualifiers`, body);
+            return response.data;
         } catch (error) {
-        console.error('Error generating qualifier matches:', error);
-        throw error;
+            console.error('Error generating qualifier matches:', error);
+            throw error;
+        }
+    },
+
+    generateQuarterfinalMatches: async (tournamentId) => {
+        try {
+            const response = await api.post(`/tournaments/${tournamentId}/generate-quarterfinals`);
+            return response.data;
+        } catch (error) {
+            console.error('Error generating quarterfinal matches:', error);
+            throw error;
         }
     },
 
     generateSemifinalMatches: async (tournamentId) => {
         try {
-            console.log('Calling generate semifinals for tournament:', tournamentId);
             const response = await api.post(`/tournaments/${tournamentId}/generate-semifinals`);
-            console.log('Semifinals generation response:', response);
             return response.data;
         } catch (error) {
             console.error('Error generating semifinal matches:', error);
-            console.error('Error response:', error.response?.data);
-            console.error('Error status:', error.response?.status);
             throw error;
         }
     },
@@ -220,6 +220,16 @@ export const tournamentService = {
         } catch (error) {
         console.error('Error resetting qualifier matches:', error);
         throw error;
+        }
+    },
+
+    resetQuarterfinalMatches: async (tournamentId) => {
+        try {
+            const response = await api.delete(`/tournaments/${tournamentId}/knockout/quarterfinals`);
+            return response.data;
+        } catch (error) {
+            console.error('Error resetting quarterfinal matches:', error);
+            throw error;
         }
     },
 

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { matchService } from '../services/matchService';
 
 const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
@@ -8,21 +8,41 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const scoresRef = useRef(scores);
+  
+  // Keep ref in sync with state
+  React.useEffect(() => {
+    scoresRef.current = scores;
+  }, [scores]);
 
   // Simple score update without version tracking
   const updateScore = useCallback(async (team, increment) => {
+    if (loading) return; // Prevent concurrent updates
+    
+    setError(null);
+    setLoading(true);
+
+    // Get current scores from ref to avoid stale closure
+    const currentScores = scoresRef.current;
     const newScores = {
-      team1Score: team === 'team1' ? Math.max(0, scores.team1Score + increment) : scores.team1Score,
-      team2Score: team === 'team2' ? Math.max(0, scores.team2Score + increment) : scores.team2Score
+      team1Score: team === 'team1' ? Math.max(0, currentScores.team1Score + increment) : currentScores.team1Score,
+      team2Score: team === 'team2' ? Math.max(0, currentScores.team2Score + increment) : currentScores.team2Score
     };
+    
+    // Validate max score if target points are set
+    const maxScore = match.targetPoints;
+    if (maxScore) {
+      if (newScores.team1Score > maxScore || newScores.team2Score > maxScore) {
+        setError(`Score cannot exceed target points (${maxScore})`);
+        setLoading(false);
+        return;
+      }
+    }
     
     // Optimistically update UI
     setScores(newScores);
-    setError(null);
-
+    
     try {
-      setLoading(true);
-      
       const updateData = {
         team1Score: newScores.team1Score,
         team2Score: newScores.team2Score
@@ -38,13 +58,11 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
         });
       }
     } catch (err) {
-      console.error('Error updating score:', err);
       const errorMessage = err.response?.data?.error || 
                           err.response?.data?.message || 
                           err.message || 
                           'Failed to update score';
       setError(errorMessage);
-      
       // Revert scores on error
       setScores({
         team1Score: match.team1Score || 0,
@@ -53,21 +71,30 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
     } finally {
       setLoading(false);
     }
-  }, [scores, match.id, match.team1Score, match.team2Score]);
+  }, [match.id, match.team1Score, match.team2Score, match.targetPoints, loading]);
 
   const completeMatch = async () => {
+    // Validate that match has a winner (not tied)
+    if (scores.team1Score === scores.team2Score) {
+      setError('Match cannot be completed with tied scores. Please update scores to determine a winner.');
+      return;
+    }
+    
+    // Validate scores don't exceed target
+    const maxScore = match.targetPoints;
+    if (maxScore && (scores.team1Score > maxScore || scores.team2Score > maxScore)) {
+      setError(`Scores cannot exceed target points (${maxScore}). Please correct the scores.`);
+      return;
+    }
+    
     try {
       setLoading(true);
       setError(null);
-      
-      console.log('Completing match:', match.id, 'with scores:', scores);
       
       const response = await matchService.completeMatch(match.id, {
         team1Score: scores.team1Score,
         team2Score: scores.team2Score
       });
-      
-      console.log('Match completed successfully:', response);
       
       // Call onComplete to refresh parent and close
       if (onComplete) {
@@ -77,8 +104,6 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
         onClose();
       }
     } catch (err) {
-      console.error('Error completing match:', err);
-      console.error('Error response:', err.response?.data);
       const errorMessage = err.response?.data?.error || 
                           err.response?.data?.message || 
                           err.message || 
@@ -148,14 +173,14 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
               <button
                 onClick={() => updateScore('team1', -1)}
                 disabled={loading || scores.team1Score === 0}
-                className="w-12 h-12 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+                className="w-14 h-14 sm:w-12 sm:h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
               >
                 −
               </button>
               <button
                 onClick={() => updateScore('team1', 1)}
                 disabled={loading}
-                className="w-12 h-12 bg-green-500 text-white rounded-full hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+                className="w-14 h-14 sm:w-12 sm:h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
               >
                 +
               </button>
@@ -167,7 +192,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
             <button
               onClick={() => updateScore('team1', -1)}
               disabled={loading || scores.team1Score === 0}
-              className="w-10 h-10 lg:w-12 lg:h-12 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+              className="w-12 h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
             >
               −
             </button>
@@ -179,7 +204,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
             <button
               onClick={() => updateScore('team1', 1)}
               disabled={loading}
-              className="w-10 h-10 lg:w-12 lg:h-12 bg-green-500 text-white rounded-full hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+              className="w-12 h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
             >
               +
             </button>
@@ -216,14 +241,14 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
               <button
                 onClick={() => updateScore('team2', -1)}
                 disabled={loading || scores.team2Score === 0}
-                className="w-12 h-12 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+                className="w-14 h-14 sm:w-12 sm:h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
               >
                 −
               </button>
               <button
                 onClick={() => updateScore('team2', 1)}
                 disabled={loading}
-                className="w-12 h-12 bg-green-500 text-white rounded-full hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+                className="w-14 h-14 sm:w-12 sm:h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
               >
                 +
               </button>
@@ -235,7 +260,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
             <button
               onClick={() => updateScore('team2', -1)}
               disabled={loading || scores.team2Score === 0}
-              className="w-10 h-10 lg:w-12 lg:h-12 bg-red-500 text-white rounded-full hover:bg-red-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+              className="w-12 h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
             >
               −
             </button>
@@ -247,7 +272,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
             <button
               onClick={() => updateScore('team2', 1)}
               disabled={loading}
-              className="w-10 h-10 lg:w-12 lg:h-12 bg-green-500 text-white rounded-full hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg"
+              className="w-12 h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
             >
               +
             </button>
