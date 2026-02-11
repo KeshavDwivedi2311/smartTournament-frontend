@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { Edit, Eye } from 'lucide-react';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -31,7 +32,7 @@ const LoginForm = () => {
           <span className={`px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${
             isAdmin ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
           }`}>
-            {isAdmin ? '✏️ Editor' : '👁️ Viewer'}
+            <span className="flex items-center gap-1">{isAdmin ? <><Edit className="w-3 h-3" /> Editor</> : <><Eye className="w-3 h-3" /> Viewer</>}</span>
           </span>
           <span className="text-gray-700 text-sm sm:text-base truncate max-w-[120px] sm:max-w-none">
             Welcome, {user.username}
@@ -51,7 +52,7 @@ const LoginForm = () => {
   if (!showLogin) {
     return (
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
-        <span className="text-gray-500 text-xs sm:text-sm">👁️ View Only Mode</span>
+        <span className="text-gray-500 text-xs sm:text-sm flex items-center gap-1"><Eye className="w-3 h-3" /> View Only Mode</span>
         <button
           onClick={() => setShowLogin(true)}
           className="px-3 py-1.5 sm:py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors w-full sm:w-auto whitespace-nowrap"

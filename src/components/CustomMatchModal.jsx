@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { tournamentService } from '../services/tournamentService';
+import { Settings, MapPin, Trophy, Target, Tag, Building2, Clock, PenLine, BarChart3 } from 'lucide-react';
 
 const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
   const [allTeams, setAllTeams] = useState([]);
@@ -104,7 +105,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
         <div className="p-3 sm:p-4 lg:p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <span className="text-purple-600">⚙️</span>
+              <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
               Create Custom Match
             </h3>
             <button
@@ -178,8 +179,8 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
                     <div className="p-2 sm:p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs sm:text-sm">
                       <div className="font-semibold text-blue-800 mb-1">{getSelectedTeamInfo(selectedTeam1)?.name}</div>
                       <div className="text-blue-600 space-y-1">
-                        <div>📍 Pool: {getSelectedTeamInfo(selectedTeam1)?.poolName || 'No Pool'}</div>
-                        <div>🏆 Ranking: #{getSelectedTeamInfo(selectedTeam1)?.poolRanking || 'N/A'}</div>
+                        <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Pool: {getSelectedTeamInfo(selectedTeam1)?.poolName || 'No Pool'}</div>
+                        <div className="flex items-center gap-1"><Trophy className="w-3 h-3" /> Ranking: #{getSelectedTeamInfo(selectedTeam1)?.poolRanking || 'N/A'}</div>
                       </div>
                     </div>
                   )}
@@ -218,8 +219,8 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
                     <div className="p-2 sm:p-3 bg-green-50 border border-green-200 rounded-lg text-xs sm:text-sm">
                       <div className="font-semibold text-green-800 mb-1">{getSelectedTeamInfo(selectedTeam2)?.name}</div>
                       <div className="text-green-600 space-y-1">
-                        <div>📍 Pool: {getSelectedTeamInfo(selectedTeam2)?.poolName || 'No Pool'}</div>
-                        <div>🏆 Ranking: #{getSelectedTeamInfo(selectedTeam2)?.poolRanking || 'N/A'}</div>
+                        <div className="flex items-center gap-1"><MapPin className="w-3 h-3" /> Pool: {getSelectedTeamInfo(selectedTeam2)?.poolName || 'No Pool'}</div>
+                        <div className="flex items-center gap-1"><Trophy className="w-3 h-3" /> Ranking: #{getSelectedTeamInfo(selectedTeam2)?.poolRanking || 'N/A'}</div>
                       </div>
                     </div>
                   )}
@@ -230,7 +231,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
               {selectedTeam1 && selectedTeam2 && (
                 <div className="p-3 sm:p-4 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg">
                   <h4 className="font-medium text-purple-800 mb-3 text-sm sm:text-base flex items-center gap-2">
-                    <span>🎯</span>
+                    <Target className="w-4 h-4" />
                     Match Preview
                   </h4>
 
@@ -269,7 +270,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <span className="flex items-center gap-2">
-                      <span>🏷️</span>
+                      <Tag className="w-4 h-4" />
                       Match Type
                     </span>
                   </label>
@@ -288,7 +289,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <span className="flex items-center gap-2">
-                      <span>🏟️</span>
+                      <Building2 className="w-4 h-4" />
                       Court Number
                       <span className="text-xs text-gray-500">(Optional)</span>
                     </span>
@@ -307,7 +308,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <span className="flex items-center gap-2">
-                    <span>⏰</span>
+                    <Clock className="w-4 h-4" />
                     Scheduled Time
                     <span className="text-xs text-gray-500">(Optional)</span>
                   </span>
@@ -323,7 +324,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   <span className="flex items-center gap-2">
-                    <span>📝</span>
+                    <PenLine className="w-4 h-4" />
                     Notes
                     <span className="text-xs text-gray-500">(Optional)</span>
                   </span>
@@ -340,7 +341,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
               {/* Teams Summary - Mobile Optimized */}
               <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
                 <h4 className="font-medium text-gray-700 mb-2 sm:mb-3 text-sm sm:text-base flex items-center gap-2">
-                  <span>📊</span>
+                  <BarChart3 className="w-4 h-4" />
                   Available Teams Summary
                 </h4>
 
@@ -399,7 +400,7 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
                   </>
                 ) : (
                   <>
-                    <span>⚙️</span>
+                    <Settings className="w-4 h-4" />
                     <span className="hidden sm:inline">Create Custom Match</span>
                     <span className="sm:hidden">Create Match</span>
                   </>

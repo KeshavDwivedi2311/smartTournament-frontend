@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { tournamentService } from '../services/tournamentService';
 import { poolService } from '../services/poolService';
+import { Target, AlertTriangle, BarChart3, Inbox, CheckCircle2, Circle, FileText, Users, Activity, Wrench, SlidersHorizontal, Trophy, Lightbulb, RefreshCw, Shuffle, Dices, Ban, Eye, XCircle, Settings } from 'lucide-react';
 
 const QualifierSetupModal = ({
   availableTeams,
@@ -246,7 +247,7 @@ const QualifierSetupModal = ({
         <div className="flex justify-between items-center p-3 sm:p-4 lg:p-6 border-b border-gray-200 flex-shrink-0">
           <div>
             <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <span className="text-blue-600">🎯</span>
+              <Target className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               Setup Qualifier Matches
             </h2>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">
@@ -293,7 +294,7 @@ const QualifierSetupModal = ({
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded mb-4 text-sm">
               <div className="flex items-center gap-2">
-                <span>⚠️</span>
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" />
                 {error}
               </div>
             </div>
@@ -304,7 +305,7 @@ const QualifierSetupModal = ({
             <div className="space-y-4">
               <div>
                 <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2 flex items-center gap-2">
-                  <span>📊</span>
+                  <BarChart3 className="w-4 h-4" />
                   Select Pools for Qualifier Generation
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 mb-4">
@@ -319,7 +320,7 @@ const QualifierSetupModal = ({
                 </div>
               ) : pools.length === 0 ? (
                 <div className="text-center py-8 bg-gray-50 rounded-lg">
-                  <div className="text-gray-500 text-lg mb-2">📭</div>
+                  <div className="text-gray-500 text-lg mb-2"><Inbox className="w-5 h-5 mx-auto" /></div>
                   <p className="text-gray-500 text-sm sm:text-base">No pools found. Create pools first.</p>
                 </div>
               ) : (
@@ -356,37 +357,37 @@ const QualifierSetupModal = ({
                               </h4>
                               {stats.isComplete && (
                                 <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">
-                                  ✅ Complete
+                                  <CheckCircle2 className="w-3 h-3 inline mr-1" /> Complete
                                 </span>
                               )}
                               {!stats.isComplete && stats.hasMatches && (
                                 <span className="ml-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-medium">
-                                  🟡 In Progress
+                                  <Circle className="w-3 h-3 inline mr-1" /> In Progress
                                 </span>
                               )}
                               {!stats.hasMatches && stats.teams > 0 && (
                                 <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
-                                  📋 Ready
+                                  <FileText className="w-3 h-3 inline mr-1" /> Ready
                                 </span>
                               )}
                               {stats.teams === 0 && (
                                 <span className="ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full font-medium">
-                                  📭 No Teams
+                                  <Inbox className="w-3 h-3 inline mr-1" /> No Teams
                                 </span>
                               )}
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                               <div className="flex items-center gap-1">
-                                <span>👥</span>
+                                <Users className="w-3 h-3" />
                                 <span className="font-medium">Teams:</span> {stats.teams || 0}
                               </div>
                               <div className="flex items-center gap-1">
-                                <span>🏸</span>
+                                <Activity className="w-3 h-3" />
                                 <span className="font-medium">Matches:</span> {stats.completedMatches || 0}/{stats.totalMatches || 0}
                               </div>
                               <div className="col-span-2 sm:col-span-1 flex items-center gap-1">
-                                <span>📊</span>
+                                <BarChart3 className="w-3 h-3" />
                                 <span className="font-medium">Status:</span>{' '}
                                 <span className={canSelect ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
                                   {canSelect ? 'Available' : 'No Teams'}
@@ -405,17 +406,17 @@ const QualifierSetupModal = ({
               {selectedPools.length > 0 && (
                 <div className="mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
                   <h4 className="font-medium text-blue-800 mb-2 text-sm sm:text-base flex items-center gap-2">
-                    <span>📋</span>
+                    <FileText className="w-4 h-4" />
                     Selection Summary
                   </h4>
                   <div className="grid grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm">
                     <div className="flex items-center gap-1">
-                      <span>🎯</span>
+                      <Target className="w-3 h-3" />
                       <span className="text-blue-700">Selected Pools:</span>
                       <span className="font-medium text-blue-900">{selectedInfo.selectedCount}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span>👥</span>
+                      <Users className="w-3 h-3" />
                       <span className="text-blue-700">Total Teams:</span>
                       <span className="font-medium text-blue-900">{selectedInfo.totalTeams}</span>
                     </div>
@@ -426,7 +427,7 @@ const QualifierSetupModal = ({
                   }) && (
                     <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs">
                       <div className="flex items-center gap-1 text-yellow-800">
-                        <span>⚠️</span>
+                        <AlertTriangle className="w-3 h-3 flex-shrink-0" />
                         <span className="font-medium">Note:</span>
                         Some selected pools have incomplete matches. Qualifiers will be based on current standings.
                       </div>
@@ -442,7 +443,7 @@ const QualifierSetupModal = ({
             <div className="space-y-4 sm:space-y-6">
               <div>
                 <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2 flex items-center gap-2">
-                  <span>⚙️</span>
+                  <Settings className="w-4 h-4" />
                   Configure Qualifier Settings
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 mb-4">
@@ -453,7 +454,7 @@ const QualifierSetupModal = ({
               {/* Qualification Mode Toggle */}
               <div className="p-3 sm:p-4 bg-gray-50 border border-gray-200 rounded-lg">
                 <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-                  <span>🔧</span>
+                  <Wrench className="w-4 h-4" />
                   Qualification Mode
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -465,7 +466,7 @@ const QualifierSetupModal = ({
                         : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
                     }`}
                   >
-                    📊 Uniform (same from each pool)
+                    <BarChart3 className="w-4 h-4 inline mr-1" /> Uniform (same from each pool)
                   </button>
                   <button
                     onClick={() => handleSettingChange('usePerPoolCounts', true)}
@@ -475,7 +476,7 @@ const QualifierSetupModal = ({
                         : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
                     }`}
                   >
-                    🎛️ Per-Pool (customise each pool)
+                    <SlidersHorizontal className="w-4 h-4 inline mr-1" /> Per-Pool (customise each pool)
                   </button>
                 </div>
               </div>
@@ -484,7 +485,7 @@ const QualifierSetupModal = ({
               {!qualifierSettings.usePerPoolCounts && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                    <span>🏆</span>
+                    <Trophy className="w-4 h-4" />
                     Teams Advancing Per Pool
                   </label>
                   <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
@@ -503,7 +504,7 @@ const QualifierSetupModal = ({
                     ))}
                   </div>
                   <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                    <span>💡</span>
+                    <Lightbulb className="w-3 h-3 flex-shrink-0" />
                     Top {qualifierSettings.teamsPerPool} ranked teams from each pool will advance
                   </p>
                 </div>
@@ -513,7 +514,7 @@ const QualifierSetupModal = ({
               {qualifierSettings.usePerPoolCounts && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                    <span>🎛️</span>
+                    <SlidersHorizontal className="w-4 h-4" />
                     Teams Advancing Per Pool (Customised)
                   </label>
                   <div className="space-y-3">
@@ -555,7 +556,7 @@ const QualifierSetupModal = ({
                     })}
                   </div>
                   <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                    <span>💡</span>
+                    <Lightbulb className="w-3 h-3 flex-shrink-0" />
                     Total qualifying teams: <span className="font-bold text-blue-600">{getTotalQualifyingTeams()}</span>
                   </p>
                 </div>
@@ -564,7 +565,7 @@ const QualifierSetupModal = ({
               {/* Match Pairing Strategy */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                  <span>🔄</span>
+                  <RefreshCw className="w-4 h-4" />
                   Match Pairing Strategy
                 </label>
                 <div className="space-y-2">
@@ -578,7 +579,7 @@ const QualifierSetupModal = ({
                       className="mr-2 sm:mr-3 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <span className="text-sm text-gray-700 flex items-center gap-2">
-                      <span>🔀</span>
+                      <Shuffle className="w-4 h-4" />
                       <span className="font-medium">Cross-Pool Pairing</span>
                       <span className="text-xs text-gray-500">(Recommended)</span>
                     </span>
@@ -597,7 +598,7 @@ const QualifierSetupModal = ({
                       className="mr-2 sm:mr-3 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <span className="text-sm text-gray-700 flex items-center gap-2">
-                      <span>📊</span>
+                      <BarChart3 className="w-4 h-4" />
                       <span className="font-medium">Ranking-Based Pairing</span>
                     </span>
                   </label>
@@ -615,7 +616,7 @@ const QualifierSetupModal = ({
                       className="mr-2 sm:mr-3 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                     />
                     <span className="text-sm text-gray-700 flex items-center gap-2">
-                      <span>🎲</span>
+                      <Dices className="w-4 h-4" />
                       <span className="font-medium">Random Pairing</span>
                     </span>
                   </label>
@@ -636,12 +637,12 @@ const QualifierSetupModal = ({
                       className="mr-2 sm:mr-3 h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                     />
                     <span className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <span>🚫</span>
+                      <Ban className="w-4 h-4" />
                       Avoid same-pool matchups
                     </span>
                   </label>
                   <p className="text-xs text-gray-500 mt-1 ml-6 sm:ml-9 flex items-center gap-1">
-                    <span>💡</span>
+                    <Lightbulb className="w-3 h-3 flex-shrink-0" />
                     Prevent teams from the same pool playing each other in qualifiers
                   </p>
                 </div>
@@ -650,30 +651,30 @@ const QualifierSetupModal = ({
               {/* Preview Summary */}
               <div className="p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg">
                 <h4 className="font-medium text-green-800 mb-2 text-sm sm:text-base flex items-center gap-2">
-                  <span>👁️</span>
+                  <Eye className="w-4 h-4" />
                   Qualifier Preview
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm">
-                  <div className="flex items-center gap-1">
-                    <span>✅</span>
-                    <span className="text-green-700">Qualifying Teams:</span>
-                    <span className="font-medium text-green-900">{selectedInfo.qualifyingTeams}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span>❌</span>
-                    <span className="text-green-700">Eliminated Teams:</span>
-                    <span className="font-medium text-green-900">{Math.max(0, selectedInfo.eliminatedTeams)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span>🏸</span>
-                    <span className="text-green-700">Expected Matches:</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm">
+                    <div className="flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span className="text-green-700">Qualifying Teams:</span>
+                      <span className="font-medium text-green-900">{selectedInfo.qualifyingTeams}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <XCircle className="w-3 h-3" />
+                      <span className="text-green-700">Eliminated Teams:</span>
+                      <span className="font-medium text-green-900">{Math.max(0, selectedInfo.eliminatedTeams)}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Activity className="w-3 h-3" />
+                      <span className="text-green-700">Expected Matches:</span>
                     <span className="font-medium text-green-900">
                       {selectedInfo.expectedMatches} qualifier matches
                     </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span>🔄</span>
-                    <span className="text-green-700">Pairing:</span>
+                    <div className="flex items-center gap-1">
+                      <RefreshCw className="w-3 h-3" />
+                      <span className="text-green-700">Pairing:</span>
                     <span className="font-medium text-green-900">
                       {qualifierSettings.pairingStrategy === 'CROSS_POOL' ? 'Cross-Pool' :
                        qualifierSettings.pairingStrategy === 'RANKING_BASED' ? 'Ranking-Based' : 'Random'}
@@ -770,7 +771,7 @@ const QualifierSetupModal = ({
                   </>
                 ) : (
                   <>
-                    <span>🎯</span>
+                    <Target className="w-4 h-4" />
                     <span>Generate {selectedInfo.expectedMatches} Qualifiers</span>
                   </>
                 )}

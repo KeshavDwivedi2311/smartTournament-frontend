@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { matchService } from '../services/matchService';
 import MatchCard from './MatchCard';
+import { Target, AlertTriangle, XCircle, CheckCircle2, Radio, Calendar, Flag, BarChart3, Sparkles } from 'lucide-react';
 
 const MatchDashboard = ({ poolId }) => {
   const [matches, setMatches] = useState({
@@ -112,14 +113,14 @@ const MatchDashboard = ({ poolId }) => {
         </div>
         <div className="space-y-1">
           {nextMatches.map((match) => (
-            <div key={match.id} className="text-xs sm:text-sm text-blue-700 truncate">
-              🎯 {match.team1Name} vs {match.team2Name}
+            <div key={match.id} className="text-xs sm:text-sm text-blue-700 truncate flex items-center gap-1">
+              <Target className="w-3 h-3 flex-shrink-0" /> {match.team1Name} vs {match.team2Name}
             </div>
           ))}
         </div>
         {nextMatches.length >= 2 && (
           <div className="text-xs text-blue-600 mt-2">
-            ⚠️ Maximum reached. Start some matches to mark more as "Next".
+            <AlertTriangle className="w-3 h-3 inline mr-1" /> Maximum reached. Start some matches to mark more as "Next".
           </div>
         )}
       </div>
@@ -159,7 +160,7 @@ const MatchDashboard = ({ poolId }) => {
             : 'bg-green-100 border border-green-200 text-green-700'
         }`}>
           <div className="flex items-center gap-2 text-xs sm:text-sm">
-            {actionFeedback.type === 'error' ? '❌' : '✅'}
+            {actionFeedback.type === 'error' ? <XCircle className="w-4 h-4 flex-shrink-0" /> : <CheckCircle2 className="w-4 h-4 flex-shrink-0" />}
             <span className="truncate">{actionFeedback.message}</span>
           </div>
         </div>
@@ -273,21 +274,21 @@ const MatchDashboard = ({ poolId }) => {
         <div className="sm:hidden">
           <nav className="flex space-x-1 overflow-x-auto pb-2 -mb-px">
             {[
-              { key: 'ongoing', label: 'Live', icon: '🔴' },
-              { key: 'next', label: 'Next', icon: '🎯' },
-              { key: 'upcoming', label: 'Scheduled', icon: '📅' },
-              { key: 'completed', label: 'Done', icon: '🏁' }
+              { key: 'ongoing', label: 'Live', icon: <Radio className="w-3 h-3" /> },
+              { key: 'next', label: 'Next', icon: <Target className="w-3 h-3" /> },
+              { key: 'upcoming', label: 'Scheduled', icon: <Calendar className="w-3 h-3" /> },
+              { key: 'completed', label: 'Done', icon: <Flag className="w-3 h-3" /> }
             ].map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-shrink-0 py-2 px-3 border-b-2 font-medium text-xs whitespace-nowrap ${
+                className={`flex-shrink-0 py-2 px-3 border-b-2 font-medium text-xs whitespace-nowrap flex items-center gap-1 ${
                   activeTab === tab.key
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
-                <span className="mr-1">{tab.icon}</span>
+                {tab.icon}
                 {tab.label} ({matches[tab.key].length})
               </button>
             ))}
@@ -297,10 +298,10 @@ const MatchDashboard = ({ poolId }) => {
         {/* Desktop: Standard Navigation */}
         <nav className="hidden sm:flex -mb-px space-x-4 lg:space-x-8">
           {[
-            { key: 'ongoing', label: 'Live', icon: '🔴' },
-            { key: 'next', label: 'Next', icon: '🎯' },
-            { key: 'upcoming', label: 'Scheduled', icon: '📅' },
-            { key: 'completed', label: 'Completed', icon: '🏁' }
+            { key: 'ongoing', label: 'Live', icon: <Radio className="w-4 h-4" /> },
+            { key: 'next', label: 'Next', icon: <Target className="w-4 h-4" /> },
+            { key: 'upcoming', label: 'Scheduled', icon: <Calendar className="w-4 h-4" /> },
+            { key: 'completed', label: 'Completed', icon: <Flag className="w-4 h-4" /> }
           ].map((tab) => (
             <button
               key={tab.key}
@@ -311,7 +312,7 @@ const MatchDashboard = ({ poolId }) => {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <span>{tab.icon}</span>
+              {tab.icon}
               {tab.label} ({matches[tab.key].length})
             </button>
           ))}
@@ -322,7 +323,7 @@ const MatchDashboard = ({ poolId }) => {
       {activeTab === 'next' && (
         <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-start gap-2 sm:gap-3">
-            <div className="text-blue-500 text-lg sm:text-xl flex-shrink-0">🎯</div>
+            <div className="text-blue-500 text-lg sm:text-xl flex-shrink-0"><Target className="w-5 h-5 sm:w-6 sm:h-6" /></div>
             <div className="min-w-0 flex-1">
               <div className="font-medium text-blue-800 mb-1 text-sm sm:text-base">Next Matches Queue</div>
               <div className="text-xs sm:text-sm text-blue-700 space-y-1">
@@ -331,7 +332,7 @@ const MatchDashboard = ({ poolId }) => {
               </div>
               {matches.next.length > 0 && (
                 <div className="text-xs text-blue-600 mt-2 font-medium">
-                  📊 Current queue: {matches.next.length}/2 matches
+                  <BarChart3 className="w-3 h-3 inline mr-1" /> Current queue: {matches.next.length}/2 matches
                 </div>
               )}
             </div>
@@ -362,9 +363,9 @@ const MatchDashboard = ({ poolId }) => {
             <div className="text-xs sm:text-sm space-y-1 sm:space-y-2">
               {activeTab === 'next' && (
                 <div className="space-y-1 sm:space-y-2">
-                  <div>🎯 Mark up to 2 scheduled matches as "Next"</div>
-                  <div className="hidden sm:block">✨ This helps you prepare and prioritize which matches to play next!</div>
-                  <div className="sm:hidden">✨ Helps prioritize upcoming matches!</div>
+                  <div className="flex items-center gap-1"><Target className="w-3 h-3 flex-shrink-0" /> Mark up to 2 scheduled matches as "Next"</div>
+                  <div className="hidden sm:flex items-center gap-1"><Sparkles className="w-3 h-3 flex-shrink-0" /> This helps you prepare and prioritize which matches to play next!</div>
+                  <div className="sm:hidden flex items-center gap-1"><Sparkles className="w-3 h-3 flex-shrink-0" /> Helps prioritize upcoming matches!</div>
                 </div>
               )}
               {activeTab === 'ongoing' && matches.next.length > 0 && (

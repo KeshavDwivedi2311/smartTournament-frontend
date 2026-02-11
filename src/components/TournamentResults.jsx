@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { poolService } from '../services/poolService';
 import { tournamentService } from '../services/tournamentService';
+import { BarChart3, Trophy, RefreshCw } from 'lucide-react';
 
 const TournamentResults = ({ tournamentId }) => {
   const [pools, setPools] = useState([]);
@@ -564,7 +565,7 @@ const TournamentResults = ({ tournamentId }) => {
             finals.map((match) => (
               <div key={match.id} className="border-2 border-yellow-300 rounded-lg p-4 sm:p-6 bg-yellow-50">
                 <div className="text-center">
-                  <div className="text-xl sm:text-2xl font-bold mb-4">🏆 FINAL 🏆</div>
+                  <div className="text-xl sm:text-2xl font-bold mb-4 flex items-center justify-center gap-2"><Trophy className="w-6 h-6 sm:w-7 sm:h-7" /> FINAL <Trophy className="w-6 h-6 sm:w-7 sm:h-7" /></div>
                   <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
                     <div className={`text-lg sm:text-xl truncate ${match.team1Score > match.team2Score ? 'font-bold text-green-600' : ''}`}>
                       {match.team1?.name || match.team1Name || 'TBD'}
@@ -582,7 +583,7 @@ const TournamentResults = ({ tournamentId }) => {
                   </div>
                   {match.status === 'COMPLETED' && (
                     <div className="mt-4">
-                      <div className="text-2xl sm:text-3xl">🏆</div>
+                      <div className="text-2xl sm:text-3xl"><Trophy className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500" /></div>
                       <div className="text-lg sm:text-xl font-bold text-yellow-600 truncate">
                         Champion: {match.team1Score > match.team2Score ?
                           (match.team1?.name || match.team1Name) :
@@ -627,7 +628,7 @@ const TournamentResults = ({ tournamentId }) => {
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-4 sm:p-6">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">📊 Tournament Results & Standings</h2>
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 flex items-center gap-2"><BarChart3 className="w-6 h-6 sm:w-7 sm:h-7" /> Tournament Results & Standings</h2>
         <p className="text-blue-100 text-sm sm:text-base">Live standings based on match results</p>
       </div>
 
@@ -682,7 +683,7 @@ const TournamentResults = ({ tournamentId }) => {
           onClick={loadAllData}
           className="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm sm:text-base font-medium"
         >
-          🔄 Refresh Results
+          <RefreshCw className="w-4 h-4 inline mr-1" /> Refresh Results
         </button>
       </div>
     </div>

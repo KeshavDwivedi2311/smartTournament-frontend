@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { playerService } from '../services/playerService';
 import { useAuth } from '../contexts/AuthContext';
+import { Crown, Medal, Zap, User, Mail, Smartphone, Cake, Siren, Heart, BarChart3, Eye } from 'lucide-react';
 
 const PlayerCard = ({ player, onPlayerDeleted }) => {
     const { isLoggedIn } = useAuth();
@@ -28,28 +29,28 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
                 return {
                     bg: 'bg-gradient-to-r from-yellow-400 to-orange-400',
                     text: 'text-yellow-900',
-                    icon: '👑',
+                    icon: Crown,
                     label: 'Captain'
                 };
             case 'VICE_CAPTAIN':
                 return {
                     bg: 'bg-gradient-to-r from-blue-400 to-purple-400',
                     text: 'text-blue-900',
-                    icon: '🥈',
+                    icon: Medal,
                     label: 'Vice Captain'
                 };
             case 'PLAYER':
                 return {
                     bg: 'bg-gradient-to-r from-green-400 to-blue-400',
                     text: 'text-green-900',
-                    icon: '⚡',
+                    icon: Zap,
                     label: 'Player'
                 };
             default:
                 return {
                     bg: 'bg-gray-100',
                     text: 'text-gray-800',
-                    icon: '👤',
+                    icon: User,
                     label: position || 'Player'
                 };
         }
@@ -91,7 +92,7 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
                             px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium flex items-center gap-1
                             ${positionConfig.bg} ${positionConfig.text} shadow-sm
                         `}>
-                            <span className="hidden sm:inline">{positionConfig.icon}</span>
+                            <span className="hidden sm:inline">{React.createElement(positionConfig.icon, { className: "w-3 h-3 sm:w-4 sm:h-4" })}</span>
                             <span>{positionConfig.label}</span>
                         </span>
                         {age && (
@@ -112,7 +113,7 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
                                     href={`mailto:${player.email}`}
                                     className="text-blue-600 hover:text-blue-800"
                                 >
-                                    📧 {player.email.length > 15 ? `${player.email.substring(0, 15)}...` : player.email}
+                                    <Mail className="w-3 h-3 inline mr-1" />{player.email.length > 15 ? `${player.email.substring(0, 15)}...` : player.email}
                                 </a>
                             ) : (
                                 <span className="text-gray-400">No email</span>
@@ -120,7 +121,7 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
                         </div>
                         {player.phone && (
                             <div className="text-xs text-gray-600 mt-1 truncate">
-                                📱 {player.phone}
+                                <Smartphone className="w-3 h-3 inline mr-1" />{player.phone}
                             </div>
                         )}
                     </div>
@@ -166,7 +167,7 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                         {player.dateOfBirth && (
                             <div className="flex items-center">
-                                <span className="font-medium text-gray-700 min-w-0 flex-shrink-0">🎂 Birthday:</span>
+                                <span className="font-medium text-gray-700 min-w-0 flex-shrink-0 flex items-center gap-1"><Cake className="w-3 h-3" /> Birthday:</span>
                                 <span className="ml-2 truncate">
                                     {new Date(player.dateOfBirth).toLocaleDateString('en-US', {
                                         month: 'short',
@@ -179,14 +180,14 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
 
                         {player.emergencyContact && (
                             <div className="flex items-center">
-                                <span className="font-medium text-gray-700 min-w-0 flex-shrink-0">🚨 Emergency:</span>
+                                <span className="font-medium text-gray-700 min-w-0 flex-shrink-0 flex items-center gap-1"><Siren className="w-3 h-3" /> Emergency:</span>
                                 <span className="ml-2 truncate">{player.emergencyContact}</span>
                             </div>
                         )}
 
                         {player.medicalInfo && (
                             <div className="flex items-start sm:col-span-2">
-                                <span className="font-medium text-gray-700 min-w-0 flex-shrink-0">🏥 Medical:</span>
+                                <span className="font-medium text-gray-700 min-w-0 flex-shrink-0 flex items-center gap-1"><Heart className="w-3 h-3" /> Medical:</span>
                                 <span className="ml-2 text-xs sm:text-sm">{player.medicalInfo}</span>
                             </div>
                         )}
@@ -195,7 +196,7 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
                     {/* Player Stats - if available */}
                     {(player.matchesPlayed || player.wins || player.losses) && (
                         <div className="mt-3 pt-3 border-t border-gray-200">
-                            <div className="text-xs font-medium text-gray-700 mb-2">📊 Statistics</div>
+                            <div className="text-xs font-medium text-gray-700 mb-2 flex items-center gap-1"><BarChart3 className="w-3 h-3" /> Statistics</div>
                             <div className="grid grid-cols-3 gap-2 text-center">
                                 <div className="bg-blue-50 rounded p-2">
                                     <div className="text-lg font-bold text-blue-600">{player.matchesPlayed || 0}</div>
@@ -262,7 +263,7 @@ const PlayerCard = ({ player, onPlayerDeleted }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
-                        👁️ View Only Mode
+                        <Eye className="w-4 h-4 mr-1" /> View Only Mode
                     </div>
                 </div>
             )}

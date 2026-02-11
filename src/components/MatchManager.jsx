@@ -3,6 +3,7 @@ import MatchDashboard from './MatchBoard';
 import { poolService } from '../services/poolService';
 import { useAuth } from '../contexts/AuthContext';
 import CustomMatchModal from './CustomMatchModal';
+import { Activity, Eye, Trophy } from 'lucide-react';
 
 const MatchManager = ({ tournamentId, onMatchUpdated }) => {
     const { isAdmin, isLoggedIn } = useAuth();
@@ -108,7 +109,7 @@ const MatchManager = ({ tournamentId, onMatchUpdated }) => {
             <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
                     <div>
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">⚽ Match Dashboard</h2>
+                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 flex items-center gap-2"><Activity className="w-6 h-6 sm:w-7 sm:h-7" /> Match Dashboard</h2>
                         <p className="text-green-100 text-sm sm:text-base">Manage and track all tournament matches</p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -143,7 +144,7 @@ const MatchManager = ({ tournamentId, onMatchUpdated }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <p className="text-blue-700 text-sm sm:text-base">
-                            👁️ Read-only mode. Contact admin to manage matches.
+                            <Eye className="w-4 h-4 inline mr-1" /> Read-only mode. Contact admin to manage matches.
                         </p>
                     </div>
                 </div>
@@ -158,7 +159,7 @@ const MatchManager = ({ tournamentId, onMatchUpdated }) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
                         <p className="text-gray-700 text-sm sm:text-base">
-                            👁️ Viewing matches in read-only mode. Login to interact with matches.
+                            <Eye className="w-4 h-4 inline mr-1" /> Viewing matches in read-only mode. Login to interact with matches.
                         </p>
                     </div>
                 </div>
@@ -303,7 +304,7 @@ const MatchManager = ({ tournamentId, onMatchUpdated }) => {
                 {selectedPool === 'all' ? (
                     <div className="p-3 sm:p-6">
                         <div className="mb-4 sm:mb-6">
-                            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">🏆 All Pool Matches Overview</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 flex items-center gap-2"><Trophy className="w-5 h-5" /> All Pool Matches Overview</h3>
                             <p className="text-sm sm:text-base text-gray-600">Next upcoming matches from all pools</p>
                         </div>
 

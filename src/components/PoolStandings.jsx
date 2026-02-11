@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { poolService } from '../services/poolService';
+import { Crown, Medal, CheckCircle2, BarChart3 } from 'lucide-react';
 
 const PoolStandings = ({ poolId, refreshTrigger }) => {
     const [standings, setStandings] = useState([]);
@@ -59,28 +60,28 @@ const PoolStandings = ({ poolId, refreshTrigger }) => {
             return {
                 bg: 'bg-yellow-400',
                 text: 'text-yellow-900',
-                icon: '👑',
+                icon: <Crown className="w-3 h-3" />,
                 label: 'Pool Leader'
             };
         } else if (index === 1) {
             return {
                 bg: 'bg-gray-300',
                 text: 'text-gray-700',
-                icon: '🥈',
+                icon: <Medal className="w-3 h-3" />,
                 label: 'Runner-up'
             };
         } else if (index < 2) {
             return {
                 bg: 'bg-green-100',
                 text: 'text-green-800',
-                icon: '✅',
+                icon: <CheckCircle2 className="w-3 h-3" />,
                 label: 'Qualified'
             };
         } else {
             return {
                 bg: 'bg-gray-100',
                 text: 'text-gray-600',
-                icon: '',
+                icon: null,
                 label: ''
             };
         }
@@ -138,7 +139,7 @@ const PoolStandings = ({ poolId, refreshTrigger }) => {
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 sm:px-6 py-3 sm:py-4">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0">
                     <div>
-                        <h3 className="text-lg sm:text-xl font-bold">📊 {standings[0]?.poolName} - Standings</h3>
+                        <h3 className="text-lg sm:text-xl font-bold flex items-center gap-2"><BarChart3 className="w-5 h-5" /> {standings[0]?.poolName} - Standings</h3>
                         <p className="text-blue-100 text-xs sm:text-sm mt-1">
                             Live tournament standings • Updated in real-time
                         </p>
@@ -353,7 +354,7 @@ const PoolStandings = ({ poolId, refreshTrigger }) => {
                                             {index < 2 && (
                                                 <div className="ml-1 sm:ml-2">
                                                     <span className="text-xs text-green-600 font-medium">
-                                                        ✅
+                                                        <CheckCircle2 className="w-3 h-3" />
                                                     </span>
                                                 </div>
                                             )}
@@ -368,8 +369,8 @@ const PoolStandings = ({ poolId, refreshTrigger }) => {
                                                     {team.teamName}
                                                 </div>
                                                 {index === 0 && (
-                                                    <div className="text-xs text-yellow-600 font-medium hidden sm:block">
-                                                        👑 Pool Leader
+                                                    <div className="text-xs text-yellow-600 font-medium hidden sm:flex items-center gap-1">
+                                                        <Crown className="w-3 h-3" /> Pool Leader
                                                     </div>
                                                 )}
                                             </div>

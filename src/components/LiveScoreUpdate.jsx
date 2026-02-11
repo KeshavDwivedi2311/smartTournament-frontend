@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { matchService } from '../services/matchService';
+import { Radio, XCircle, Trophy, RefreshCw, Flag } from 'lucide-react';
 
 const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
   const [scores, setScores] = useState({
@@ -128,7 +129,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
       {/* Header */}
       <div className="flex justify-between items-center mb-3 sm:mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-lg sm:text-xl">🔴</span>
+          <span className="text-lg sm:text-xl text-red-500"><Radio className="w-5 h-5 sm:w-6 sm:h-6" /></span>
           <h4 className="font-semibold text-gray-800 text-sm sm:text-base lg:text-lg">Live Score Update</h4>
         </div>
         <button
@@ -145,7 +146,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
       {error && (
         <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-red-100 border border-red-200 rounded-lg">
           <div className="flex items-center gap-2 text-red-700 text-xs sm:text-sm">
-            <span>❌</span>
+            <XCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
         </div>
@@ -158,7 +159,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
           <div className={`font-medium text-gray-700 mb-2 sm:mb-3 text-sm sm:text-base truncate px-2 py-1 rounded-lg transition-colors ${
             winner === 'team1' ? 'bg-green-100 text-green-800 font-bold' : ''
           }`}>
-            {winner === 'team1' && <span className="mr-1">🏆</span>}
+            {winner === 'team1' && <Trophy className="w-4 h-4 inline mr-1" />}
             {match.team1Name}
           </div>
 
@@ -226,7 +227,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
           <div className={`font-medium text-gray-700 mb-2 sm:mb-3 text-sm sm:text-base truncate px-2 py-1 rounded-lg transition-colors ${
             winner === 'team2' ? 'bg-green-100 text-green-800 font-bold' : ''
           }`}>
-            {winner === 'team2' && <span className="mr-1">🏆</span>}
+            {winner === 'team2' && <Trophy className="w-4 h-4 inline mr-1" />}
             {match.team2Name}
           </div>
 
@@ -303,7 +304,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
             disabled={loading}
             className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors text-sm font-medium"
           >
-            🔄 Reset Scores
+            <RefreshCw className="w-4 h-4 inline mr-1" /> Reset Scores
           </button>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -323,7 +324,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
                   <span>...</span>
                 </div>
               ) : (
-                '🏁 Complete'
+                <><Flag className="w-4 h-4 inline mr-1" /> Complete</>
               )}
             </button>
           </div>
@@ -336,7 +337,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
             disabled={loading}
             className="px-4 py-2 lg:px-6 lg:py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors text-sm lg:text-base font-medium"
           >
-            🔄 Reset
+            <RefreshCw className="w-4 h-4 inline mr-1" /> Reset
           </button>
           <button
             onClick={onClose}
@@ -355,7 +356,7 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
                 <span>Completing...</span>
               </div>
             ) : (
-              '🏁 Complete Match'
+              <><Flag className="w-4 h-4 inline mr-1" /> Complete Match</>
             )}
           </button>
         </div>

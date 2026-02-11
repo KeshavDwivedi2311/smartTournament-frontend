@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { poolService } from '../services/poolService';
 import { useAuth } from '../contexts/AuthContext';
 import PoolStandings from './PoolStandings';
+import { Waves, RefreshCw } from 'lucide-react';
 
 const PoolManager = ({ tournamentId, onPoolsUpdated, refreshTrigger }) => {
     const { isLoggedIn, isAdmin } = useAuth();
@@ -95,12 +96,12 @@ const PoolManager = ({ tournamentId, onPoolsUpdated, refreshTrigger }) => {
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0">
                     <div>
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2">🏊 Pool Management</h2>
+                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 flex items-center gap-2"><Waves className="w-6 h-6 sm:w-7 sm:h-7" /> Pool Management</h2>
                         <p className="text-blue-100 text-sm sm:text-base">Manage pool phases and view live standings</p>
                     </div>
                     {refreshTrigger > 0 && (
                         <div className="text-xs sm:text-sm bg-white bg-opacity-20 rounded px-2 py-1 self-start sm:self-auto">
-                            🔄 Auto-refreshed {refreshTrigger} times
+                            <RefreshCw className="w-3 h-3 inline mr-1" /> Auto-refreshed {refreshTrigger} times
                         </div>
                     )}
                 </div>

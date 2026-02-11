@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { tournamentService } from '../services/tournamentService';
 import { matchService } from '../services/matchService';
 import MatchCard from './MatchCard';
+import { CheckCircle2, XCircle, Trophy, Shield, Zap, Trash2, RotateCcw, Sparkles } from 'lucide-react';
 
 const SemifinalAndFinal = ({
   tournamentId,
@@ -306,7 +307,7 @@ const SemifinalAndFinal = ({
               <span className="text-blue-700">Qualifiers:</span>
               <span className="font-medium text-blue-900">
                 {progressionInfo.qualifiersCompleted}/{progressionInfo.qualifiersTotal}
-                {progressionInfo.allQualifiersCompleted && ' ✅'}
+                {progressionInfo.allQualifiersCompleted && <CheckCircle2 className="w-3 h-3 inline ml-1" />}
               </span>
             </div>
             {knockoutData.quarterfinals.length > 0 && (
@@ -314,7 +315,7 @@ const SemifinalAndFinal = ({
                 <span className="text-blue-700">Quarterfinals:</span>
                 <span className="font-medium text-blue-900">
                   {progressionInfo.quarterfinalsCompleted}/{progressionInfo.quarterfinalsTotal}
-                  {progressionInfo.allQuarterfinalsCompleted && ' ✅'}
+                  {progressionInfo.allQuarterfinalsCompleted && <CheckCircle2 className="w-3 h-3 inline ml-1" />}
                 </span>
               </div>
             )}
@@ -322,14 +323,14 @@ const SemifinalAndFinal = ({
               <span className="text-blue-700">Semifinals:</span>
               <span className="font-medium text-blue-900">
                 {progressionInfo.semifinalsCompleted}/{progressionInfo.semifinalsTotal}
-                {progressionInfo.allSemifinalsCompleted && ' ✅'}
+                {progressionInfo.allSemifinalsCompleted && <CheckCircle2 className="w-3 h-3 inline ml-1" />}
               </span>
             </div>
             <div className="flex justify-between sm:flex-col sm:justify-start">
               <span className="text-blue-700">Finals:</span>
               <span className="font-medium text-blue-900">
                 {knockoutData.finals.filter(m => m.status === 'COMPLETED').length}/{knockoutData.finals.length}
-                {knockoutData.finals.length > 0 && knockoutData.finals.every(m => m.status === 'COMPLETED') && ' 🏆'}
+                {knockoutData.finals.length > 0 && knockoutData.finals.every(m => m.status === 'COMPLETED') && <Trophy className="w-3 h-3 inline ml-1" />}
               </span>
             </div>
           </div>
@@ -348,7 +349,7 @@ const SemifinalAndFinal = ({
                     disabled={loading}
                   >
                     <span className="flex items-center justify-center">
-                      <span className="mr-2">🛡️</span>
+                      <Shield className="w-4 h-4 mr-2" />
                       <span className="hidden sm:inline">Generate Quarterfinal Matches</span>
                       <span className="sm:hidden">Generate Quarterfinals</span>
                     </span>
@@ -372,7 +373,7 @@ const SemifinalAndFinal = ({
                     disabled={loading}
                   >
                     <span className="flex items-center justify-center">
-                      <span className="mr-2">⚡</span>
+                      <Zap className="w-4 h-4 mr-2" />
                       <span className="hidden sm:inline">Generate Semifinal Matches</span>
                       <span className="sm:hidden">Generate Semifinals</span>
                     </span>
@@ -398,7 +399,7 @@ const SemifinalAndFinal = ({
                     disabled={loading}
                   >
                     <span className="flex items-center justify-center">
-                      <span className="mr-2">🏆</span>
+                      <Trophy className="w-4 h-4 mr-2" />
                       <span className="hidden sm:inline">Generate Final Matches</span>
                       <span className="sm:hidden">Generate Finals</span>
                     </span>
@@ -424,7 +425,7 @@ const SemifinalAndFinal = ({
                   disabled={loading}
                 >
                   <span className="flex items-center justify-center gap-1">
-                    🗑️ <span className="hidden sm:inline">Reset Quarterfinals</span><span className="sm:hidden">Reset</span>
+                    <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Reset Quarterfinals</span><span className="sm:hidden">Reset</span>
                   </span>
                 </button>
               )}
@@ -436,7 +437,7 @@ const SemifinalAndFinal = ({
                   disabled={loading}
                 >
                   <span className="flex items-center justify-center gap-1">
-                    🗑️ <span className="hidden sm:inline">Reset Semifinals</span><span className="sm:hidden">Reset</span>
+                    <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Reset Semifinals</span><span className="sm:hidden">Reset</span>
                   </span>
                 </button>
               )}
@@ -448,7 +449,7 @@ const SemifinalAndFinal = ({
                   disabled={loading}
                 >
                   <span className="flex items-center justify-center gap-1">
-                    🗑️ <span className="hidden sm:inline">Reset Finals</span><span className="sm:hidden">Reset</span>
+                    <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Reset Finals</span><span className="sm:hidden">Reset</span>
                   </span>
                 </button>
               )}
@@ -459,8 +460,8 @@ const SemifinalAndFinal = ({
                 className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors border-2 border-gray-600 disabled:opacity-50 text-sm font-medium"
                 disabled={loading}
               >
-                <span className="flex items-center justify-center gap-1">
-                  🧹 <span className="hidden sm:inline">Reset All Knockout</span><span className="sm:hidden">Reset All</span>
+                  <span className="flex items-center justify-center gap-1">
+                  <RotateCcw className="w-4 h-4" /> <span className="hidden sm:inline">Reset All Knockout</span><span className="sm:hidden">Reset All</span>
                 </span>
               </button>
             </div>
@@ -531,7 +532,7 @@ const SemifinalAndFinal = ({
                     <span>Qualifiers completed:</span>
                     <span className={progressionInfo.allQualifiersCompleted ? 'text-green-600' : 'text-red-600'}>
                       {progressionInfo.qualifiersCompleted}/{progressionInfo.qualifiersTotal}
-                      {progressionInfo.allQualifiersCompleted ? ' ✅' : ' ❌'}
+                      {progressionInfo.allQualifiersCompleted ? <CheckCircle2 className="w-3 h-3 inline ml-1" /> : <XCircle className="w-3 h-3 inline ml-1" />}
                     </span>
                   </div>
                 )}
@@ -542,7 +543,7 @@ const SemifinalAndFinal = ({
                         <span>Quarterfinals completed:</span>
                         <span className={progressionInfo.allQuarterfinalsCompleted ? 'text-green-600' : 'text-red-600'}>
                           {progressionInfo.quarterfinalsCompleted}/{progressionInfo.quarterfinalsTotal}
-                          {progressionInfo.allQuarterfinalsCompleted ? ' ✅' : ' ❌'}
+                          {progressionInfo.allQuarterfinalsCompleted ? <CheckCircle2 className="w-3 h-3 inline ml-1" /> : <XCircle className="w-3 h-3 inline ml-1" />}
                         </span>
                       </div>
                     ) : (
@@ -550,7 +551,7 @@ const SemifinalAndFinal = ({
                         <span>Qualifiers completed:</span>
                         <span className={progressionInfo.allQualifiersCompleted ? 'text-green-600' : 'text-red-600'}>
                           {progressionInfo.qualifiersCompleted}/{progressionInfo.qualifiersTotal}
-                          {progressionInfo.allQualifiersCompleted ? ' ✅' : ' ❌'}
+                          {progressionInfo.allQualifiersCompleted ? <CheckCircle2 className="w-3 h-3 inline ml-1" /> : <XCircle className="w-3 h-3 inline ml-1" />}
                         </span>
                       </div>
                     )}
@@ -561,7 +562,7 @@ const SemifinalAndFinal = ({
                     <span>Semifinals completed:</span>
                     <span className={progressionInfo.allSemifinalsCompleted ? 'text-green-600' : 'text-red-600'}>
                       {progressionInfo.semifinalsCompleted}/{progressionInfo.semifinalsTotal}
-                      {progressionInfo.allSemifinalsCompleted ? ' ✅' : ' ❌'}
+                      {progressionInfo.allSemifinalsCompleted ? <CheckCircle2 className="w-3 h-3 inline ml-1" /> : <XCircle className="w-3 h-3 inline ml-1" />}
                     </span>
                   </div>
                 )}
@@ -648,11 +649,11 @@ const SemifinalAndFinal = ({
             <div className="text-xs sm:text-sm text-blue-700">
               {currentMatches.filter(m => m.status === 'COMPLETED').length} of {currentMatches.length} matches completed
               {currentMatches.every(m => m.status === 'COMPLETED') && (
-                <span className="block mt-1 font-medium text-green-700">
-                  🎉 All {activePhase} completed!
+                <span className="mt-1 font-medium text-green-700 flex items-center justify-center gap-1">
+                  <Sparkles className="w-4 h-4" /> All {activePhase} completed!
                   {activePhase === 'quarterfinals' && ' Ready for semifinals.'}
                   {activePhase === 'semifinals' && ' Ready for finals.'}
-                  {activePhase === 'finals' && ' Tournament complete! 🏆'}
+                  {activePhase === 'finals' && <> Tournament complete! <Trophy className="w-4 h-4" /></>}
                 </span>
               )}
             </div>
