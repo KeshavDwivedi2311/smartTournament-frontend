@@ -13,23 +13,17 @@ const MatchTimer = ({ match, targetPoints = null }) => {
     if (!match) return;
 
     const status = match.status || 'SCHEDULED';
-    const startTime = match.startTime;
-    const endTime = match.endTime;
     const elapsedSeconds = match.elapsedSeconds || 0;
 
-    if (status === 'ONGOING' && startTime) {
+    if (status === 'ONGOING') {
       setIsRunning(true);
-      // Calculate initial elapsed time
-      const start = new Date(startTime);
-      const now = new Date();
-      const initialElapsed = Math.floor((now - start) / 1000);
-      setElapsedTime(initialElapsed);
+      // Use backend-calculated elapsedSeconds as initial value to avoid timezone mismatch
+      // (server runs in UTC, browser runs in local timezone like IST)
+      setElapsedTime(elapsedSeconds);
 
-      // Update every second
+      // Increment locally every second
       const interval = setInterval(() => {
-        const now = new Date();
-        const elapsed = Math.floor((now - start) / 1000);
-        setElapsedTime(elapsed);
+        setElapsedTime(prev => prev + 1);
       }, 1000);
 
       return () => clearInterval(interval);
