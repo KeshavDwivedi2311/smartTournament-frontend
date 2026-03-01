@@ -93,7 +93,7 @@ const TournamentDetails = () => {
                             </span>
                         </div>
                         <button
-                            onClick={() => navigate('/dashboard')}
+                            onClick={() => navigate('/app')}
                             className="bg-red-500 text-white px-3 py-1.5 sm:py-1 rounded text-sm hover:bg-red-600 self-start sm:self-auto sm:ml-4"
                         >
                             Back to Dashboard
@@ -114,7 +114,7 @@ const TournamentDetails = () => {
             <div className="mb-4 sm:mb-6">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3 sm:gap-0">
                     <button
-                        onClick={() => navigate('/dashboard')}
+                        onClick={() => navigate('/app')}
                         className="flex items-center text-blue-600 hover:text-blue-800 text-sm sm:text-base p-2 sm:p-0 -ml-2 sm:ml-0 rounded-lg sm:rounded-none hover:bg-blue-50 sm:hover:bg-transparent transition-colors self-start"
                     >
                         <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

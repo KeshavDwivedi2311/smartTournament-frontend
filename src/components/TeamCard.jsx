@@ -22,11 +22,11 @@ const TeamCard = ({ team, onTeamDeleted, tournamentId }) => {
     };
 
     const handleViewTeam = () => {
-        navigate(`/team/${team.id}`);
+        navigate(`/app/team/${team.id}`);
     };
 
     const handleEdit = (teamId) => {
-        navigate(`/edit-team/${teamId}`);
+        navigate(`/app/edit-team/${teamId}`);
     };
 
     return (

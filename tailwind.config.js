@@ -30,8 +30,24 @@ export default {
           700: '#5e377e',
           800: '#522d6c',
           900: '#46235a',
-        }
-      }
+        },
+        // SmartSport neon accent colors
+        neon: {
+          blue: '#00d4ff',
+          green: '#00ff88',
+          purple: '#8b5cf6',
+        },
+        dark: {
+          900: '#060a13',
+          800: '#0a0e1a',
+          700: '#0f1628',
+          600: '#151d30',
+          500: '#1a2540',
+        },
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
     },
   },
   plugins: [],

@@ -106,7 +106,7 @@ const Dashboard = () => {
                                 </p>
                             </div>
                             <Button
-                                onClick={() => navigate(`/tournament/${tournament.id}`)}
+                                onClick={() => navigate(`/app/tournament/${tournament.id}`)}
                                 className="w-full"
                                 size="md"
                             >
