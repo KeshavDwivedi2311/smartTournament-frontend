@@ -91,14 +91,18 @@ const MatchManager = ({ tournamentId, onMatchUpdated }) => {
 
     if (pools.length === 0) {
         return (
-            <div className="text-center py-8 sm:py-12 bg-gray-50 rounded-lg">
-                <div className="mb-4">
-                    <svg className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <div className="text-center py-12 sm:py-16 px-6">
+                <div className="relative inline-block mb-5">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--sport-blue)]/10 to-[var(--sport-purple)]/10 flex items-center justify-center mx-auto">
+                        <Activity className="w-8 h-8 text-[var(--sport-blue)]" />
+                    </div>
+                    <svg className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-24 h-3 opacity-15" viewBox="0 0 96 12" fill="none">
+                        <line x1="0" y1="6" x2="96" y2="6" stroke="var(--sport-blue)" strokeWidth="1.5" />
+                        <line x1="48" y1="0" x2="48" y2="12" stroke="var(--sport-blue)" strokeWidth="1.5" />
                     </svg>
                 </div>
-                <div className="text-gray-500 text-base sm:text-lg">No pools available</div>
-                <p className="text-gray-400 mt-2 text-sm sm:text-base px-4">Create pools first to manage matches</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-1">No pools available</h3>
+                <p className="text-gray-500 text-sm max-w-xs mx-auto">Create pools first, then matches will appear here when scheduled.</p>
             </div>
         );
     }
@@ -106,27 +110,29 @@ const MatchManager = ({ tournamentId, onMatchUpdated }) => {
     return (
         <div className="space-y-4 sm:space-y-6">
             {/* Header with Match Dashboard Title */}
-            <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg p-4 sm:p-6">
+            <div className="bg-gradient-to-r from-[var(--sport-bg)] via-[var(--sport-bg-light)] to-[var(--sport-bg)] text-white rounded-xl p-4 sm:p-6 border border-white/[0.06]">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
                     <div>
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 flex items-center gap-2"><Activity className="w-6 h-6 sm:w-7 sm:h-7" /> Match Dashboard</h2>
-                        <p className="text-green-100 text-sm sm:text-base">Manage and track all tournament matches</p>
+                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 flex items-center gap-2">
+                            <Activity className="w-6 h-6 sm:w-7 sm:h-7 text-[var(--sport-green)]" /> Match Dashboard
+                        </h2>
+                        <p className="text-slate-400 text-sm sm:text-base">Manage and track all tournament matches</p>
                     </div>
                     <div className="flex items-center gap-2">
                         {/* View Mode Toggle - Desktop Only */}
-                        <div className="hidden sm:flex bg-white bg-opacity-20 rounded-lg p-1">
+                        <div className="hidden sm:flex bg-white/10 rounded-lg p-0.5">
                             <button
                                 onClick={() => setViewMode('grid')}
-                                className={`px-3 py-1 rounded text-sm transition-colors ${
-                                    viewMode === 'grid' ? 'bg-white text-green-600' : 'text-white hover:bg-white hover:bg-opacity-20'
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                                    viewMode === 'grid' ? 'bg-white text-[var(--sport-bg)]' : 'text-slate-300 hover:text-white'
                                 }`}
                             >
                                 Grid
                             </button>
                             <button
                                 onClick={() => setViewMode('list')}
-                                className={`px-3 py-1 rounded text-sm transition-colors ${
-                                    viewMode === 'list' ? 'bg-white text-green-600' : 'text-white hover:bg-white hover:bg-opacity-20'
+                                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                                    viewMode === 'list' ? 'bg-white text-[var(--sport-bg)]' : 'text-slate-300 hover:text-white'
                                 }`}
                             >
                                 List

@@ -156,7 +156,7 @@ function LiveMatchSimulator() {
         <div className={`match-sim-team ${scoringTeam === 'a' ? 'scoring' : ''}`}>
           <span className="match-sim-team-name">
             {frame.serving === 'a' && <span className="serving-dot" />}
-            🏸 Smashers
+            Smashers
           </span>
           <div className="match-sim-scores">
             {frame.set >= 2 && (
@@ -174,7 +174,7 @@ function LiveMatchSimulator() {
         <div className={`match-sim-team ${scoringTeam === 'b' ? 'scoring' : ''}`}>
           <span className="match-sim-team-name">
             {frame.serving === 'b' && <span className="serving-dot" />}
-            🏸 Netblazers
+            Netblazers
           </span>
           <div className="match-sim-scores">
             {frame.set >= 2 && (
@@ -197,7 +197,7 @@ function LiveMatchSimulator() {
       {frame.winner && (
         <div className="match-sim-winner">
           <span className="match-sim-winner-text">
-            <span className="match-sim-winner-trophy">🏆</span>
+            <span className="match-sim-winner-trophy">★</span>
             Smashers Win!
           </span>
         </div>
@@ -466,7 +466,7 @@ function TournamentBracket() {
               <rect x={col4X} y={champY} width={110} height={boxH} rx="8"
                 fill="rgba(0,255,136,0.08)" stroke="rgba(0,255,136,0.3)" strokeWidth="2" />
               <text x={col4X + 18} y={champY + 20} className="bracket-winner-text">
-                🏆 {BRACKET_TEAMS.final.champion}
+                ★ {BRACKET_TEAMS.final.champion}
               </text>
             </g>
 
@@ -775,11 +775,11 @@ export default function LandingPage() {
                   </span>
                 </div>
                 <div className="ui-preview-row">
-                  <span className="ui-team-name">🏸 Team Alpha</span>
+                  <span className="ui-team-name">Team Alpha</span>
                   <span className="ui-score ui-score--won">21</span>
                 </div>
                 <div className="ui-preview-row">
-                  <span className="ui-team-name">🏸 Team Bravo</span>
+                  <span className="ui-team-name">Team Bravo</span>
                   <span className="ui-score ui-score--lost">18</span>
                 </div>
                 <div className="ui-preview-row">

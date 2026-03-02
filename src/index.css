@@ -2,20 +2,106 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════
+   TournPur — Sport Design System
+   ══════════════════════════════════════════════ */
+
+:root {
+  /* ── Brand Colors ── */
+  --sport-blue: #00d4ff;
+  --sport-green: #00ff88;
+  --sport-purple: #8b5cf6;
+  --sport-live: #22c55e;
+  --sport-warning: #f59e0b;
+  --sport-danger: #ef4444;
+
+  /* ── Dark Palette ── */
+  --sport-bg: #060a13;
+  --sport-bg-light: #0c1929;
+  --sport-bg-card: #111827;
+
+  /* ── Neutral ── */
+  --sport-slate-50: #f8fafc;
+  --sport-slate-100: #f1f5f9;
+  --sport-slate-200: #e2e8f0;
+  --sport-slate-400: #94a3b8;
+  --sport-slate-500: #64748b;
+  --sport-slate-700: #334155;
+  --sport-slate-900: #0f172a;
+}
+
+/* ── Sport Keyframes ── */
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+@keyframes liveDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes scoreFlip {
+  0% { transform: scaleY(1); opacity: 1; }
+  40% { transform: scaleY(0); opacity: 0.5; }
+  60% { transform: scaleY(0); opacity: 0.5; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes scorePunch {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); color: var(--sport-green); }
+  100% { transform: scale(1); }
+}
+
+@keyframes cardHoverLift {
+  to {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 212, 255, 0.08);
+  }
+}
+
+@keyframes slideInTab {
+  from { transform: scaleX(0); opacity: 0; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes shimmerGlow {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes statusGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(34, 197, 94, 0.3); }
+  50% { box-shadow: 0 0 16px rgba(34, 197, 94, 0.6); }
+}
+
+@keyframes confettiBurst {
+  0% { transform: scale(0) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1.5) rotate(360deg); opacity: 0; }
+}
+
 @layer base {
   body {
     @apply font-sans bg-gray-50 text-gray-800 leading-relaxed;
   }
-  
+
   /* Mobile optimizations */
   * {
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   button, a {
     touch-action: manipulation;
   }
-  
+
   input, textarea, select {
     font-size: 16px; /* Prevents zoom on iOS */
   }
@@ -27,13 +113,53 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
+
   /* Touch manipulation for better mobile performance */
   .touch-manipulation {
     touch-action: manipulation;
+  }
+
+  /* ── Sport Utility Classes ── */
+  .animate-live-pulse {
+    animation: livePulse 2s ease-in-out infinite;
+  }
+
+  .animate-live-dot {
+    animation: liveDot 1.2s ease-in-out infinite;
+  }
+
+  .animate-score-flip {
+    animation: scoreFlip 0.4s ease-in-out;
+  }
+
+  .animate-score-punch {
+    animation: scorePunch 0.35s ease-out;
+  }
+
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-status-glow {
+    animation: statusGlow 2s ease-in-out infinite;
+  }
+
+  .sport-gradient-text {
+    background: linear-gradient(135deg, var(--sport-blue), var(--sport-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .sport-card-hover {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sport-card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 212, 255, 0.06);
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { matchService } from '../services/matchService';
-import { Radio, XCircle, Trophy, RefreshCw, Flag } from 'lucide-react';
+import { XCircle, Trophy, RefreshCw, Flag, Minus, Plus } from 'lucide-react';
 
 const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
   const [scores, setScores] = useState({
@@ -9,49 +9,55 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [animatingTeam, setAnimatingTeam] = useState(null);
   const scoresRef = useRef(scores);
-  
-  // Keep ref in sync with state
+
   React.useEffect(() => {
     scoresRef.current = scores;
   }, [scores]);
 
-  // Simple score update without version tracking
+  const winner = scores.team1Score === scores.team2Score
+    ? null
+    : scores.team1Score > scores.team2Score ? 'team1' : 'team2';
+
+  const totalPoints = scores.team1Score + scores.team2Score;
+  const maxScore = match.targetPoints;
+
+  const getWinProbability = () => {
+    if (totalPoints === 0) return 50;
+    return Math.round((scores.team1Score / Math.max(totalPoints, 1)) * 100);
+  };
+  const team1Prob = getWinProbability();
+
   const updateScore = useCallback(async (team, increment) => {
-    if (loading) return; // Prevent concurrent updates
-    
+    if (loading) return;
     setError(null);
     setLoading(true);
 
-    // Get current scores from ref to avoid stale closure
     const currentScores = scoresRef.current;
     const newScores = {
       team1Score: team === 'team1' ? Math.max(0, currentScores.team1Score + increment) : currentScores.team1Score,
       team2Score: team === 'team2' ? Math.max(0, currentScores.team2Score + increment) : currentScores.team2Score
     };
-    
-    // Validate max score if target points are set
-    const maxScore = match.targetPoints;
-    if (maxScore) {
-      if (newScores.team1Score > maxScore || newScores.team2Score > maxScore) {
-        setError(`Score cannot exceed target points (${maxScore})`);
-        setLoading(false);
-        return;
-      }
+
+    if (maxScore && (newScores.team1Score > maxScore || newScores.team2Score > maxScore)) {
+      setError(`Score cannot exceed target points (${maxScore})`);
+      setLoading(false);
+      return;
     }
-    
-    // Optimistically update UI
+
+    if (increment > 0) {
+      setAnimatingTeam(team);
+      setTimeout(() => setAnimatingTeam(null), 400);
+    }
+
     setScores(newScores);
-    
+
     try {
-      const updateData = {
+      const response = await matchService.updateMatch(match.id, {
         team1Score: newScores.team1Score,
         team2Score: newScores.team2Score
-      };
-      
-      const response = await matchService.updateMatch(match.id, updateData);
-      
-      // Sync scores from response if available
+      });
       if (response?.data) {
         setScores({
           team1Score: response.data.team1Score ?? newScores.team1Score,
@@ -59,304 +65,192 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
         });
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.error || 
-                          err.response?.data?.message || 
-                          err.message || 
-                          'Failed to update score';
-      setError(errorMessage);
-      // Revert scores on error
-      setScores({
-        team1Score: match.team1Score || 0,
-        team2Score: match.team2Score || 0
-      });
+      setError(err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to update score');
+      setScores({ team1Score: match.team1Score || 0, team2Score: match.team2Score || 0 });
     } finally {
       setLoading(false);
     }
   }, [match.id, match.team1Score, match.team2Score, match.targetPoints, loading]);
 
   const completeMatch = async () => {
-    // Validate that match has a winner (not tied)
     if (scores.team1Score === scores.team2Score) {
-      setError('Match cannot be completed with tied scores. Please update scores to determine a winner.');
+      setError('Match cannot be completed with tied scores.');
       return;
     }
-    
-    // Validate scores don't exceed target
-    const maxScore = match.targetPoints;
     if (maxScore && (scores.team1Score > maxScore || scores.team2Score > maxScore)) {
-      setError(`Scores cannot exceed target points (${maxScore}). Please correct the scores.`);
+      setError(`Scores cannot exceed target points (${maxScore}).`);
       return;
     }
-    
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await matchService.completeMatch(match.id, {
-        team1Score: scores.team1Score,
-        team2Score: scores.team2Score
-      });
-      
-      // Call onComplete to refresh parent and close
-      if (onComplete) {
-        onComplete();
-      } else {
-        // Fallback: just close
-        onClose();
-      }
+      await matchService.completeMatch(match.id, { team1Score: scores.team1Score, team2Score: scores.team2Score });
+      if (onComplete) onComplete(); else onClose();
     } catch (err) {
-      const errorMessage = err.response?.data?.error || 
-                          err.response?.data?.message || 
-                          err.message || 
-                          'Failed to complete match';
-      setError(errorMessage);
+      setError(err.response?.data?.error || err.response?.data?.message || err.message || 'Failed to complete match');
     } finally {
       setLoading(false);
     }
   };
 
-  const resetScores = () => {
-    setScores({ team1Score: 0, team2Score: 0 });
-    setError(null);
-  };
+  const resetScores = () => { setScores({ team1Score: 0, team2Score: 0 }); setError(null); };
 
-  const winner = scores.team1Score === scores.team2Score 
-    ? null 
-    : scores.team1Score > scores.team2Score ? 'team1' : 'team2';
-
-  return (
-    <div className="bg-gradient-to-br from-gray-50 to-blue-50 border-t border-gray-200 rounded-b-lg p-3 sm:p-4 lg:p-6 mt-3 relative">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-3 sm:mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-lg sm:text-xl text-red-500"><Radio className="w-5 h-5 sm:w-6 sm:h-6" /></span>
-          <h4 className="font-semibold text-gray-800 text-sm sm:text-base lg:text-lg">Live Score Update</h4>
-        </div>
-        <button
-          onClick={onClose}
-          className="p-1 sm:p-2 text-gray-500 hover:text-gray-700 hover:bg-white/50 rounded-full transition-colors"
-        >
-          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+  /* ── Reusable score panel for one team ── */
+  const ScorePanel = ({ team, teamName, score, isLeading }) => (
+    <div className={`rounded-xl transition-all border ${
+      isLeading ? 'bg-[var(--sport-green)]/10 border-[var(--sport-green)]/20' : 'bg-white/5 border-white/5'
+    }`}>
+      {/* Team name */}
+      <div className={`px-4 pt-3 pb-1 text-sm font-semibold truncate text-center transition-colors ${
+        isLeading ? 'text-[var(--sport-green)]' : 'text-slate-400'
+      }`}>
+        {isLeading && <Trophy className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />}
+        {teamName}
       </div>
 
-      {/* Error Display */}
-      {error && (
-        <div className="mb-3 sm:mb-4 p-2 sm:p-3 bg-red-100 border border-red-200 rounded-lg">
-          <div className="flex items-center gap-2 text-red-700 text-xs sm:text-sm">
-            <XCircle className="w-4 h-4 flex-shrink-0" />
-            <span>{error}</span>
-          </div>
+      {/* Score + buttons row */}
+      <div className="flex items-center justify-center gap-3 px-3 pb-3 pt-1">
+        <button
+          onClick={() => updateScore(team, -1)}
+          disabled={loading || score === 0}
+          className="w-12 h-12 sm:w-11 sm:h-11 flex items-center justify-center bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed transition-all touch-manipulation"
+        >
+          <Minus className="w-5 h-5" strokeWidth={3} />
+        </button>
+
+        <div className={`
+          text-4xl sm:text-5xl font-black tabular-nums text-white min-w-[3ch] text-center transition-all
+          ${animatingTeam === team ? 'animate-score-punch' : ''}
+        `}>
+          {score}
         </div>
+
+        <button
+          onClick={() => updateScore(team, 1)}
+          disabled={loading}
+          className="w-12 h-12 sm:w-11 sm:h-11 flex items-center justify-center bg-[var(--sport-green)]/20 text-[var(--sport-green)] rounded-xl hover:bg-[var(--sport-green)]/30 active:scale-90 disabled:opacity-25 disabled:cursor-not-allowed transition-all touch-manipulation"
+        >
+          <Plus className="w-5 h-5" strokeWidth={3} />
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="bg-gradient-to-b from-[var(--sport-bg)] to-[var(--sport-bg-light)] border-t border-white/10 rounded-b-xl p-4 sm:p-6 relative overflow-hidden">
+      {/* Background glow */}
+      {winner && (
+        <div className={`absolute inset-0 opacity-5 pointer-events-none ${
+          winner === 'team1' ? 'bg-gradient-to-r from-[var(--sport-green)] to-transparent' : 'bg-gradient-to-l from-[var(--sport-green)] to-transparent'
+        }`} />
       )}
 
-      {/* Score Display */}
-      <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-6 lg:gap-8">
-        {/* Team 1 */}
-        <div className="text-center">
-          <div className={`font-medium text-gray-700 mb-2 sm:mb-3 text-sm sm:text-base truncate px-2 py-1 rounded-lg transition-colors ${
-            winner === 'team1' ? 'bg-green-100 text-green-800 font-bold' : ''
-          }`}>
-            {winner === 'team1' && <Trophy className="w-4 h-4 inline mr-1" />}
-            {match.team1Name}
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-live-dot" />
+            <h4 className="font-bold text-white text-sm tracking-tight">Live Scoreboard</h4>
           </div>
-
-          {/* Mobile Layout */}
-          <div className="sm:hidden space-y-3">
-            <div className={`text-4xl font-bold min-w-[80px] mx-auto p-3 rounded-xl transition-colors ${
-              winner === 'team1' ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50'
-            }`}>
-              {scores.team1Score}
-            </div>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => updateScore('team1', -1)}
-                disabled={loading || scores.team1Score === 0}
-                className="w-14 h-14 sm:w-12 sm:h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
-              >
-                −
-              </button>
-              <button
-                onClick={() => updateScore('team1', 1)}
-                disabled={loading}
-                className="w-14 h-14 sm:w-12 sm:h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          {/* Desktop Layout */}
-          <div className="hidden sm:flex items-center justify-center gap-3 lg:gap-4">
-            <button
-              onClick={() => updateScore('team1', -1)}
-              disabled={loading || scores.team1Score === 0}
-              className="w-12 h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
-            >
-              −
-            </button>
-            <div className={`text-3xl lg:text-4xl font-bold min-w-[80px] lg:min-w-[100px] p-2 lg:p-3 rounded-xl transition-colors ${
-              winner === 'team1' ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50'
-            }`}>
-              {scores.team1Score}
-            </div>
-            <button
-              onClick={() => updateScore('team1', 1)}
-              disabled={loading}
-              className="w-12 h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
-            >
-              +
-            </button>
-          </div>
+          <button onClick={onClose} className="p-2 text-slate-500 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
-        {/* VS Separator - Mobile Only */}
-        <div className="sm:hidden text-center py-2">
-          <div className="text-gray-600 font-bold text-lg">VS</div>
-          {winner && (
-            <div className="text-xs text-gray-500 mt-1">
-              {scores.team1Score > scores.team2Score ? 'Team 1 Leading' : 'Team 2 Leading'}
+        {/* Error */}
+        {error && (
+          <div className="mb-4 p-2.5 bg-red-500/10 border border-red-500/20 rounded-lg">
+            <div className="flex items-center gap-2 text-red-400 text-xs">
+              <XCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{error}</span>
             </div>
+          </div>
+        )}
+
+        {/* ═══ Scoreboard — stacked on mobile, side-by-side on desktop ═══ */}
+        <div className="space-y-3 sm:space-y-0 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:gap-4 sm:items-center mb-5">
+          {/* Team 1 */}
+          <ScorePanel team="team1" teamName={match.team1Name} score={scores.team1Score} isLeading={winner === 'team1'} />
+
+          {/* VS divider */}
+          <div className="flex sm:flex-col items-center justify-center gap-2 py-1 sm:py-0">
+            <div className="flex-1 h-px sm:h-auto sm:w-px sm:flex-1 bg-white/10 sm:hidden" />
+            <span className="text-xs font-bold text-slate-500 tracking-widest">VS</span>
+            <div className="flex-1 h-px sm:h-auto sm:w-px sm:flex-1 bg-white/10 sm:hidden" />
+            {maxScore && (
+              <span className="text-[10px] text-slate-500 bg-white/5 px-2 py-0.5 rounded-full hidden sm:block">
+                Target {maxScore}
+              </span>
+            )}
+          </div>
+
+          {/* Team 2 */}
+          <ScorePanel team="team2" teamName={match.team2Name} score={scores.team2Score} isLeading={winner === 'team2'} />
+        </div>
+
+        {/* Mobile target points */}
+        {maxScore && (
+          <div className="sm:hidden text-center mb-3">
+            <span className="text-[11px] text-slate-500 bg-white/5 px-3 py-1 rounded-full">
+              Target: {maxScore} pts
+            </span>
+          </div>
+        )}
+
+        {/* Win Probability Bar */}
+        {totalPoints > 0 && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1 font-medium">
+              <span>{team1Prob}%</span>
+              <span className="text-slate-600">Win Probability</span>
+              <span>{100 - team1Prob}%</span>
+            </div>
+            <div className="h-1.5 bg-white/10 rounded-full overflow-hidden flex">
+              <div
+                className="bg-gradient-to-r from-[var(--sport-blue)] to-[var(--sport-green)] rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${team1Prob}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Rally Counter */}
+        <div className="flex items-center justify-center gap-4 mb-5 text-xs text-slate-500">
+          <span>Rallies: <strong className="text-white">{totalPoints}</strong></span>
+          {maxScore && (
+            <span>Progress: <strong className="text-[var(--sport-blue)]">{Math.round((Math.max(scores.team1Score, scores.team2Score) / maxScore) * 100)}%</strong></span>
           )}
         </div>
 
-        {/* Team 2 */}
-        <div className="text-center">
-          <div className={`font-medium text-gray-700 mb-2 sm:mb-3 text-sm sm:text-base truncate px-2 py-1 rounded-lg transition-colors ${
-            winner === 'team2' ? 'bg-green-100 text-green-800 font-bold' : ''
-          }`}>
-            {winner === 'team2' && <Trophy className="w-4 h-4 inline mr-1" />}
-            {match.team2Name}
-          </div>
-
-          {/* Mobile Layout */}
-          <div className="sm:hidden space-y-3">
-            <div className={`text-4xl font-bold min-w-[80px] mx-auto p-3 rounded-xl transition-colors ${
-              winner === 'team2' ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50'
-            }`}>
-              {scores.team2Score}
-            </div>
-            <div className="flex justify-center gap-3">
-              <button
-                onClick={() => updateScore('team2', -1)}
-                disabled={loading || scores.team2Score === 0}
-                className="w-14 h-14 sm:w-12 sm:h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
-              >
-                −
-              </button>
-              <button
-                onClick={() => updateScore('team2', 1)}
-                disabled={loading}
-                className="w-14 h-14 sm:w-12 sm:h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-xl sm:text-lg font-bold shadow-lg touch-manipulation"
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          {/* Desktop Layout */}
-          <div className="hidden sm:flex items-center justify-center gap-3 lg:gap-4">
-            <button
-              onClick={() => updateScore('team2', -1)}
-              disabled={loading || scores.team2Score === 0}
-              className="w-12 h-12 bg-red-500 text-white rounded-full hover:bg-red-600 active:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
-            >
-              −
-            </button>
-            <div className={`text-3xl lg:text-4xl font-bold min-w-[80px] lg:min-w-[100px] p-2 lg:p-3 rounded-xl transition-colors ${
-              winner === 'team2' ? 'text-green-600 bg-green-50' : 'text-blue-600 bg-blue-50'
-            }`}>
-              {scores.team2Score}
-            </div>
-            <button
-              onClick={() => updateScore('team2', 1)}
-              disabled={loading}
-              className="w-12 h-12 bg-green-500 text-white rounded-full hover:bg-green-600 active:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-lg font-bold shadow-lg touch-manipulation"
-            >
-              +
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Score Summary - Desktop Only */}
-      <div className="hidden sm:block text-center mt-4 lg:mt-6">
-        {winner ? (
-          <div className="text-sm lg:text-base text-gray-600">
-            <span className="font-semibold text-green-600">
-              {winner === 'team1' ? match.team1Name : match.team2Name}
-            </span>
-            {' '}is currently leading
-          </div>
-        ) : (
-          <div className="text-sm lg:text-base text-gray-600">Match is currently tied</div>
-        )}
-      </div>
-
-      {/* Action Buttons */}
-      <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-0 sm:flex sm:justify-center sm:gap-3 lg:gap-4">
-        {/* Mobile: Stacked */}
-        <div className="sm:hidden space-y-2">
+        {/* Action Buttons */}
+        <div className="grid grid-cols-2 sm:flex sm:justify-center gap-2 sm:gap-3">
           <button
             onClick={resetScores}
             disabled={loading}
-            className="w-full px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+            className="px-4 py-3 sm:py-2 border border-white/10 text-slate-400 rounded-xl hover:bg-white/5 disabled:opacity-30 transition-colors text-sm font-medium flex items-center justify-center gap-1.5"
           >
-            <RefreshCw className="w-4 h-4 inline mr-1" /> Reset Scores
-          </button>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={completeMatch}
-              disabled={loading}
-              className="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm font-medium shadow-lg"
-            >
-              {loading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>...</span>
-                </div>
-              ) : (
-                <><Flag className="w-4 h-4 inline mr-1" /> Complete</>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Desktop: Horizontal */}
-        <div className="hidden sm:flex gap-3 lg:gap-4">
-          <button
-            onClick={resetScores}
-            disabled={loading}
-            className="px-4 py-2 lg:px-6 lg:py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors text-sm lg:text-base font-medium"
-          >
-            <RefreshCw className="w-4 h-4 inline mr-1" /> Reset
+            <RefreshCw className="w-3.5 h-3.5" /> Reset
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 lg:px-6 lg:py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm lg:text-base font-medium"
+            className="px-4 py-3 sm:py-2 border border-white/10 text-slate-400 rounded-xl hover:bg-white/5 transition-colors text-sm font-medium"
           >
             Cancel
           </button>
           <button
             onClick={completeMatch}
-            disabled={loading}
-            className="px-6 py-2 lg:px-8 lg:py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm lg:text-base font-medium shadow-lg"
+            disabled={loading || scores.team1Score === scores.team2Score}
+            className="col-span-2 px-6 py-3 sm:py-2 bg-gradient-to-r from-[var(--sport-blue)] to-[var(--sport-green)] text-white rounded-xl hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-sm font-bold shadow-lg shadow-[var(--sport-blue)]/20 flex items-center justify-center gap-1.5"
           >
             {loading ? (
               <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                <span>Completing...</span>
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                Completing...
               </div>
             ) : (
-              <><Flag className="w-4 h-4 inline mr-1" /> Complete Match</>
+              <><Flag className="w-3.5 h-3.5" /> Complete Match</>
             )}
           </button>
         </div>
@@ -364,10 +258,10 @@ const LiveScoreUpdate = ({ match, onClose, onComplete }) => {
 
       {/* Loading Overlay */}
       {loading && (
-        <div className="absolute inset-0 bg-white/50 rounded-b-lg flex items-center justify-center">
-          <div className="bg-white p-3 rounded-lg shadow-lg flex items-center gap-2">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-            <span className="text-sm font-medium text-gray-700">Updating...</span>
+        <div className="absolute inset-0 bg-[var(--sport-bg)]/60 rounded-b-xl flex items-center justify-center backdrop-blur-sm z-20">
+          <div className="flex items-center gap-2">
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-[var(--sport-blue)] border-t-transparent" />
+            <span className="text-sm font-medium text-white">Updating...</span>
           </div>
         </div>
       )}

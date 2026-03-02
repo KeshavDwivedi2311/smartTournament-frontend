@@ -279,10 +279,10 @@ const CustomMatchModal = ({ tournamentId, onClose, onMatchCreated }) => {
                     onChange={(e) => setMatchType(e.target.value)}
                     className="w-full px-3 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                   >
-                    <option value="CUSTOM">⚙️ Custom Match</option>
-                    <option value="EXHIBITION">🎪 Exhibition Match</option>
-                    <option value="PLAYOFF">🏆 Playoff Match</option>
-                    <option value="FRIENDLY">🤝 Friendly Match</option>
+                    <option value="CUSTOM">Custom Match</option>
+                    <option value="EXHIBITION">Exhibition Match</option>
+                    <option value="PLAYOFF">Playoff Match</option>
+                    <option value="FRIENDLY">Friendly Match</option>
                   </select>
                 </div>
 

@@ -18,7 +18,7 @@ import { LoadingSpinner, LoadingSkeleton } from '../components/LoadingSpinner';
 import { useQuery } from '@tanstack/react-query';
 import Pagination from '../components/Pagination';
 import Button from '../components/ui/Button';
-import { Eye, Trophy, RefreshCw, Settings } from 'lucide-react';
+import { Eye, Trophy, RefreshCw, Settings, ClipboardList, Activity, Swords, Users } from 'lucide-react';
 import { usePagination } from '../hooks/usePagination';
 
 const TournamentDetails = () => {
@@ -110,17 +110,18 @@ const TournamentDetails = () => {
             {tournamentId && <TournamentScheduleTracker tournamentId={tournamentId} />}
             
             <div className="p-4 sm:p-6 max-w-7xl mx-auto">
-            {/* Header with Login */}
+            {/* ═══ Tournament Hero Bar ═══ */}
             <div className="mb-4 sm:mb-6">
+                {/* Top bar: Back + Actions */}
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3 sm:gap-0">
                     <button
                         onClick={() => navigate('/app')}
-                        className="flex items-center text-blue-600 hover:text-blue-800 text-sm sm:text-base p-2 sm:p-0 -ml-2 sm:ml-0 rounded-lg sm:rounded-none hover:bg-blue-50 sm:hover:bg-transparent transition-colors self-start"
+                        className="flex items-center text-slate-500 hover:text-[var(--sport-blue)] text-sm p-1.5 -ml-1.5 rounded-lg hover:bg-blue-50 transition-colors self-start gap-1"
                     >
-                        <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        Back to Dashboard
+                        Dashboard
                     </button>
 
                     <div className="flex items-center gap-2">
@@ -141,87 +142,125 @@ const TournamentDetails = () => {
                     </div>
                 </div>
 
+                {/* ═══ HERO HEADER STRIP ═══ */}
                 {tournament && (
-                    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-4 sm:mb-6">
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-2 break-words">{tournament.title}</h1>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
-                            <div className="min-w-0">
-                                <span className="font-medium block sm:inline">Start Date:</span>
-                                <span className="block sm:inline truncate">
-                                    {tournament.startDate ? new Date(tournament.startDate).toLocaleDateString() : 'TBD'}
-                                </span>
-                            </div>
-                            <div className="min-w-0">
-                                <span className="font-medium block sm:inline">Venue:</span>
-                                <span className="block sm:inline truncate">{tournament.venue || 'TBD'}</span>
-                            </div>
-                            <div className="min-w-0">
-                                <span className="font-medium block sm:inline">Max Teams:</span>
-                                <span className="block sm:inline">{tournament.maxTeams || 'Unlimited'}</span>
-                            </div>
-                            <div className="min-w-0">
-                                <span className="font-medium block sm:inline">Status:</span>
-                                <span className={`inline-block mt-1 sm:mt-0 sm:ml-1 px-2 py-0.5 rounded text-xs font-medium ${
-                                    tournament.status === 'CREATED' ? 'bg-blue-100 text-blue-800' :
-                                    tournament.status === 'ONGOING' ? 'bg-green-100 text-green-800' :
-                                    tournament.status === 'COMPLETED' ? 'bg-gray-100 text-gray-800' :
-                                    'bg-yellow-100 text-yellow-800'
-                                }`}>
-                                    {tournament.status}
-                                </span>
-                            </div>
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sport-bg)] via-[var(--sport-bg-light)] to-[var(--sport-bg)] p-5 sm:p-8 mb-4 sm:mb-6 border border-white/[0.06] shadow-xl">
+                        {/* Decorative background elements */}
+                        <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
+                            <svg viewBox="0 0 800 200" fill="none" className="w-full h-full">
+                                <line x1="0" y1="100" x2="800" y2="100" stroke="white" strokeWidth="1" />
+                                <line x1="400" y1="0" x2="400" y2="200" stroke="white" strokeWidth="1" />
+                                <rect x="200" y="30" width="400" height="140" rx="8" stroke="white" strokeWidth="1" />
+                            </svg>
                         </div>
-                        {tournament.description && (
-                            <p className="text-gray-600 mt-3 sm:mt-4 text-sm sm:text-base">{tournament.description}</p>
-                        )}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[var(--sport-blue)]/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-[var(--sport-green)]/8 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+                        {/* Content */}
+                        <div className="relative z-10">
+                            {/* Status + Type badges */}
+                            <div className="flex items-center gap-2 mb-3 flex-wrap">
+                                <span className={`
+                                    inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold
+                                    ${tournament.status === 'ONGOING'
+                                        ? 'bg-[var(--sport-live)]/15 text-[var(--sport-live)] animate-status-glow'
+                                        : tournament.status === 'CREATED'
+                                        ? 'bg-[var(--sport-blue)]/15 text-[var(--sport-blue)]'
+                                        : tournament.status === 'COMPLETED'
+                                        ? 'bg-slate-500/15 text-slate-400'
+                                        : 'bg-amber-500/15 text-amber-400'
+                                    }
+                                `}>
+                                    {tournament.status === 'ONGOING' && (
+                                        <span className="w-1.5 h-1.5 rounded-full bg-current animate-live-dot" />
+                                    )}
+                                    {tournament.status || 'Unknown'}
+                                </span>
+                                {tournament.tournamentType && (
+                                    <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[var(--sport-purple)]/15 text-[var(--sport-purple)]">
+                                        {tournament.tournamentType}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Title */}
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-2 break-words leading-tight">
+                                <Trophy className="w-7 h-7 text-[var(--sport-blue)] inline mr-2 -mt-1" />{tournament.title}
+                            </h1>
+
+                            {/* Subtitle info */}
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400 mb-5">
+                                {tournament.startDate && (
+                                    <span className="flex items-center gap-1.5">
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        {new Date(tournament.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </span>
+                                )}
+                                {tournament.venue && (
+                                    <span className="flex items-center gap-1.5">
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        {tournament.venue}
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Stats strip */}
+                            <div className="flex flex-wrap gap-3 sm:gap-4">
+                                <div className="flex items-center gap-2 bg-white/[0.06] rounded-xl px-3.5 py-2 border border-white/[0.06]">
+                                    <span className="text-lg font-bold text-[var(--sport-blue)]">{teams.length}</span>
+                                    <span className="text-xs text-slate-400 font-medium">Teams</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-white/[0.06] rounded-xl px-3.5 py-2 border border-white/[0.06]">
+                                    <span className="text-lg font-bold text-[var(--sport-green)]">{pools.length}</span>
+                                    <span className="text-xs text-slate-400 font-medium">Pools</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-white/[0.06] rounded-xl px-3.5 py-2 border border-white/[0.06]">
+                                    <span className="text-lg font-bold text-[var(--sport-purple)]">{tournament.maxTeams || '∞'}</span>
+                                    <span className="text-xs text-slate-400 font-medium">Max Teams</span>
+                                </div>
+                            </div>
+
+                            {tournament.description && (
+                                <p className="text-slate-400 mt-4 text-sm sm:text-base max-w-2xl leading-relaxed">{tournament.description}</p>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
 
-            {/* Tab Navigation */}
-            <div className="bg-white rounded-lg shadow-md">
-                <div className="border-b border-gray-200">
-                    <nav className="flex overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-0">
-                        <button
-                            onClick={() => setActiveTab('overview')}
-                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
-                                activeTab === 'overview'
-                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
-                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
-                            }`}
-                        >
-                            Overview
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('matches')}
-                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
-                                activeTab === 'matches'
-                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
-                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
-                            }`}
-                        >
-                            Matches
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('knockout')}
-                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
-                                activeTab === 'knockout'
-                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
-                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
-                            }`}
-                        >
-                            Knockout
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('results')}
-                            className={`px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-base sm:text-base whitespace-nowrap flex-shrink-0 min-h-[48px] sm:min-h-0 touch-manipulation ${
-                                activeTab === 'results'
-                                    ? 'border-b-2 border-blue-500 text-blue-600 font-semibold'
-                                    : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
-                            }`}
-                        >
-                            Results
-                        </button>
+            {/* ═══ Sport Tab Navigation ═══ */}
+            <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+                <div className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                    <nav className="flex overflow-x-auto scrollbar-hide -mx-4 sm:mx-0 px-4 sm:px-2">
+                        {[
+                          { key: 'overview', label: 'Overview', Icon: ClipboardList },
+                          { key: 'matches', label: 'Matches', Icon: Activity },
+                          { key: 'knockout', label: 'Knockout', Icon: Swords },
+                          { key: 'results', label: 'Results', Icon: Trophy },
+                        ].map((tab) => (
+                            <button
+                                key={tab.key}
+                                onClick={() => setActiveTab(tab.key)}
+                                className={`
+                                    relative px-4 sm:px-6 py-3.5 sm:py-3 font-medium text-sm whitespace-nowrap flex-shrink-0
+                                    min-h-[48px] sm:min-h-0 touch-manipulation transition-all duration-200
+                                    flex items-center gap-1.5
+                                    ${activeTab === tab.key
+                                        ? 'text-[var(--sport-bg)] font-semibold'
+                                        : 'text-gray-500 hover:text-gray-700 active:text-blue-600'
+                                    }
+                                `}
+                            >
+                                <tab.Icon className="w-4 h-4" />
+                                {tab.label}
+                                {activeTab === tab.key && (
+                                    <span
+                                        className="absolute bottom-0 left-2 right-2 h-[3px] rounded-full bg-gradient-to-r from-[var(--sport-blue)] to-[var(--sport-green)]"
+                                        style={{ animation: 'slideInTab 0.25s ease-out both' }}
+                                    />
+                                )}
+                            </button>
+                        ))}
                     </nav>
                 </div>
 
@@ -267,15 +306,14 @@ const TournamentDetails = () => {
                                     ))}
                                 </div>
                             ) : paginatedTeams.length === 0 ? (
-                                <div className="text-center py-8 sm:py-12 bg-gray-50 rounded-lg px-4">
-                                    <div className="text-gray-500 text-base sm:text-lg">No teams registered yet</div>
-                                    <p className="text-gray-400 mt-2 text-sm sm:text-base">Add the first team to get started</p>
+                                <div className="text-center py-12 sm:py-16 px-6">
+                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--sport-blue)]/10 to-[var(--sport-green)]/10 flex items-center justify-center mx-auto mb-4">
+                                        <Users className="w-8 h-8 text-[var(--sport-blue)]" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-1">No teams registered yet</h3>
+                                    <p className="text-gray-500 text-sm max-w-xs mx-auto">Add the first team to get started</p>
                                     {isLoggedIn && (
-                                        <Button
-                                            onClick={() => setIsCreateTeamModalOpen(true)}
-                                            size="md"
-                                            className="mt-4"
-                                        >
+                                        <Button onClick={() => setIsCreateTeamModalOpen(true)} size="md" className="mt-5">
                                             Add First Team
                                         </Button>
                                     )}
@@ -342,23 +380,24 @@ const TournamentDetails = () => {
             {/* Tournament Standings Section - Only show on Overview and Results tabs */}
             {(activeTab === 'overview' || activeTab === 'results') && (
                 <div className="mt-6 sm:mt-8">
-                    <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
-                            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-                                <span className="inline-flex items-center gap-2"><Trophy className="w-5 h-5" /> Tournament Standings</span>
+                    <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 gap-3 sm:gap-0 bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
+                            <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
+                                <Trophy className="w-5 h-5 text-[var(--sport-blue)]" /> Tournament Standings
                             </h2>
                             <button
                                 onClick={() => setRefreshTrigger(prev => prev + 1)}
-                                className="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base font-medium w-full sm:w-auto"
+                                className="px-4 py-2 bg-[var(--sport-blue)] text-white rounded-xl hover:opacity-90 transition-opacity text-sm font-semibold w-full sm:w-auto flex items-center justify-center gap-2 shadow-sm"
                             >
-                                <span className="inline-flex items-center gap-2"><RefreshCw className="w-4 h-4" /> Refresh</span>
+                                <RefreshCw className="w-4 h-4" /> Refresh
                             </button>
                         </div>
-
-                        <TournamentStandings
-                            tournamentId={tournamentId}
-                            refreshTrigger={refreshTrigger}
-                        />
+                        <div className="p-4 sm:p-6">
+                            <TournamentStandings
+                                tournamentId={tournamentId}
+                                refreshTrigger={refreshTrigger}
+                            />
+                        </div>
                     </div>
                 </div>
             )}
