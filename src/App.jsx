@@ -7,6 +7,8 @@ import { LoadingSpinner } from './components/LoadingSpinner';
 import './App.css';
 
 // Lazy load pages for code splitting
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const TournamentDetails = lazy(() => import('./pages/TournamentDetails'));
 const TeamDetails = lazy(() => import('./pages/TeamDetails'));
@@ -15,20 +17,53 @@ function App() {
   return (
     <AuthProvider>
       <ErrorBoundary>
-        <div className="min-h-screen bg-gray-50">
-          <Layout>
-            <Suspense fallback={<LoadingSpinner fullScreen size="lg" text="Loading page..." />}>
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/tournament/:tournamentId" element={<TournamentDetails />} />
-                <Route path="/team/:teamId" element={<TeamDetails />} />
-                {/* Add a catch-all route for 404 */}
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
-            </Suspense>
-          </Layout>
-        </div>
+        <Suspense fallback={<LoadingSpinner fullScreen size="lg" text="Loading..." />}>
+          <Routes>
+            {/* ── Public / Marketing ── */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+
+            {/* ── App (authenticated area) ── */}
+            <Route
+              path="/app"
+              element={
+                <div className="min-h-screen bg-gray-50">
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                </div>
+              }
+            />
+            <Route
+              path="/app/tournament/:tournamentId"
+              element={
+                <div className="min-h-screen bg-gray-50">
+                  <Layout>
+                    <TournamentDetails />
+                  </Layout>
+                </div>
+              }
+            />
+            <Route
+              path="/app/team/:teamId"
+              element={
+                <div className="min-h-screen bg-gray-50">
+                  <Layout>
+                    <TeamDetails />
+                  </Layout>
+                </div>
+              }
+            />
+
+            {/* ── Legacy redirects ── */}
+            <Route path="/dashboard" element={<Navigate to="/app" replace />} />
+            <Route path="/tournament/:tournamentId" element={<Navigate to="/app/tournament/:tournamentId" replace />} />
+            <Route path="/team/:teamId" element={<Navigate to="/app/team/:teamId" replace />} />
+
+            {/* ── Catch-all ── */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </ErrorBoundary>
     </AuthProvider>
   );

@@ -11,8 +11,8 @@ body {
   overflow-x: hidden;
 }
 
-/* Better touch targets for mobile */
-button, a, input, select, textarea {
+/* Better touch targets for mobile — scoped to interactive elements only */
+input, select, textarea {
   min-height: 44px; /* Apple's recommended minimum touch target */
 }
 

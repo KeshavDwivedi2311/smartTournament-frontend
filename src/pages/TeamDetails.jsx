@@ -52,9 +52,9 @@ const TeamDetails = () => {
 
     const handleBackToTournament = () => {
         if (team?.tournament?.id) {
-            navigate(`/tournament/${team.tournament.id}`);
+            navigate(`/app/tournament/${team.tournament.id}`);
         } else {
-            navigate('/dashboard');
+            navigate('/app');
         }
     };
 
@@ -75,7 +75,7 @@ const TeamDetails = () => {
                             <strong>Error:</strong> <span className="text-sm sm:text-base">{error}</span>
                         </div>
                         <button
-                            onClick={() => navigate('/dashboard')}
+                            onClick={() => navigate('/app')}
                             className="bg-red-500 text-white px-3 py-1.5 sm:py-1 rounded text-sm hover:bg-red-600 self-start sm:self-auto sm:ml-4"
                         >
                             Back to Dashboard
